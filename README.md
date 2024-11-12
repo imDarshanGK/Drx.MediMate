@@ -1,1 +1,1 @@
-# MAVERICK-VF142-Drug-Information-Chatbot-and-a-Symptom-Checker-with-Drug-Recommendation-Assistant
+# Drug-Information-Chatbot-and-a-Symptom-Checker-with-Drug-Recommendation-Assistant
