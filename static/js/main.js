@@ -74,3 +74,15 @@ function formatResponse(text) {
 document.getElementById("userInput").addEventListener("keypress", function(event) {
     if (event.key === "Enter") sendMessage();
 });
+
+// Toggle the profile menu visibility
+function toggleProfileMenu() {
+    const profileContainer = document.querySelector('.profile-container');
+    profileContainer.classList.toggle('active');
+}
+
+// Logout function
+function logout() {
+    // Here you can add your logout logic (e.g., clearing session or redirecting to a login page)
+    window.location.href = '/'; // Redirect to login page after logout
+}

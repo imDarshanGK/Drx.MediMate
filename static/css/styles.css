@@ -111,3 +111,47 @@ body {
     }
   }
   
+  /* Profile Button Styles */
+.profile-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+}
+
+#profileButton {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.profile-menu {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-menu button {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.profile-menu button:hover {
+  background-color: #d32f2f;
+}
+
+/* Show the profile menu when clicked */
+.profile-container.active .profile-menu {
+  display: block;
+}

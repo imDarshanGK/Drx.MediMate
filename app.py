@@ -11,9 +11,10 @@ app = Flask(__name__)
 
 # Function to get drug information
 def get_drug_information(drug_name):
-    prompt = f"Provide detailed information on the drug {drug_name} including usage, dosage, side effects, and contraindications."
+    prompt = f"Provide a detailed, evidence-based summary about the drug {drug_name} including its common uses, known side effects, contraindications, and typical dosage. This is intended to assist healthcare professionals in their clinical decisions a a human can not remeber everything you are a encyclopedia."
     response = model.generate_content(prompt)
     return response.text
+
 
 # Function to check symptoms and recommend drugs
 def symptom_checker(symptoms):
@@ -22,8 +23,12 @@ def symptom_checker(symptoms):
     return response.text
 
 @app.route('/')
+def sisu():
+    return render_template('sisu.html')
+@app.route('/index.html')
 def index():
     return render_template('index.html')
+
 
 @app.route('/get_drug_info', methods=['POST'])
 def get_drug_info():
