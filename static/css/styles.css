@@ -111,20 +111,26 @@ body {
     }
   }
   
-  /* Profile Button Styles */
+/* Profile Button Styles */
 .profile-container {
-  position: absolute;
+  position: fixed;  /* Fixed positioning to ensure it stays in the top right */
   top: 10px;
   right: 10px;
   z-index: 100;
 }
 
+/* Profile Button Styling */
 #profileButton {
   padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
 }
 
+/* Profile Menu Styling */
 .profile-menu {
   display: none;
   position: absolute;
@@ -134,17 +140,19 @@ body {
   border: 1px solid #ccc;
   padding: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 150px; /* Fixed width for larger screens */
+  text-align: center;
 }
 
 .profile-menu button {
-  padding: 10px 20px;
+  padding: 10px;
   cursor: pointer;
   font-size: 14px;
   background-color: #f44336;
-  color: #fff;
+  color: white;
   border: none;
   width: 100%;
-  text-align: left;
+  border-radius: 5px;
 }
 
 .profile-menu button:hover {
@@ -154,4 +162,49 @@ body {
 /* Show the profile menu when clicked */
 .profile-container.active .profile-menu {
   display: block;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For smaller screens (mobile devices) */
+@media (max-width: 768px) {
+  .profile-container {
+      top: 5px;
+      right: 5px;
+  }
+
+  #profileButton {
+      padding: 8px 12px;
+      font-size: 14px;
+  }
+
+  .profile-menu {
+      width: 120px; /* Adjust the menu width for smaller screens */
+  }
+
+  .profile-menu button {
+      font-size: 12px;
+  }
+}
+
+/* For very small screens (smaller than 480px) */
+@media (max-width: 480px) {
+  .profile-container {
+      top: 5px;
+      right: 5px;
+  }
+
+  #profileButton {
+      padding: 6px 10px;
+      font-size: 12px;
+  }
+
+  .profile-menu {
+      width: 100px; /* Adjust the menu width further for very small screens */
+  }
+
+  .profile-menu button {
+      font-size: 10px;
+      padding: 8px;
+  }
 }
