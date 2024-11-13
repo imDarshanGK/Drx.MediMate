@@ -52,6 +52,10 @@ input:focus {
     box-shadow: 0 0 10px rgba(58, 61, 255, 0.5);
 }
 
+.input-group input {
+    padding-left: 40px; /* Adjust padding to fit icon */
+}
+
 .input-group {
     position: relative;
     margin-bottom: 20px;
