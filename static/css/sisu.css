@@ -86,6 +86,22 @@ input:not(:placeholder-shown) ~ label {
     color: #3a3dff;
 }
 
+.btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+
+
 button {
     width: 100%;
     padding: 12px;
@@ -144,7 +160,8 @@ button:hover {
 #signUpButton,
 #signInButton {
     background-color: transparent;
-    color: #3a3dff;
+    color:#dfe9f5;
+    background-color:#AF1740 ;
     border: none;
     font-size: 1.1rem;
     cursor: pointer;
