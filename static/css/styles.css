@@ -48,10 +48,12 @@ h1 {
   background-color: #f1f7fa;
   border-radius: 10px;
   border: 1px solid #e0f0f5;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .message {
-  max-width: 75%;
   padding: 12px 18px;
   border-radius: 12px;
   margin-bottom: 10px;
@@ -59,7 +61,8 @@ h1 {
   line-height: 1.6;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   white-space: pre-line;
-  animation: slideIn 0.5s ease;
+  display: inline-block; /* Ensures the message is sized based on content */
+  word-wrap: break-word; /* Ensures long words wrap inside the bubble */
 }
 
 @keyframes slideIn {
@@ -68,10 +71,19 @@ h1 {
 }
 
 .user {
-  align-self: flex-end;
-  background-color: #d0f1ea;
-  color: #2d5a4b;
+  align-self: flex-end; /* Aligns the message to the right */
+  background-color: #d0f1ea; /* Background color for user messages */
+  color: #2d5a4b; /* Text color for user messages */
+  text-align: right; /* Ensures the text inside the bubble is aligned to the right */
+  padding: 12px 18px; /* Adds padding inside the message bubble */
+  border-radius: 12px; /* Rounded corners for the message bubble */
+  margin-bottom: 10px; /* Adds space between messages */
+  max-width: 75%; /* Limits the maximum width of the message bubble */
+  word-wrap: break-word; /* Ensures long words break and wrap correctly */
+  display: inline-block; /* Makes the bubble only as wide as the content */
+  margin-left: auto; /* Pushes the message bubble to the right */
 }
+
 
 .aditi {
   align-self: flex-start;
@@ -181,7 +193,7 @@ button:active {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 200px;
   text-align: left;
-  font-size: 11px;
+  font-size: 14px;
   border-radius: 8px;
   animation: fadeIn 0.3s ease;
 }
@@ -208,13 +220,13 @@ button:active {
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
   .profile-container {
-      top: 5px;
-      right: 5px;
+    top: 5px;
+    right: 5px;
   }
 
   #profileButton {
-      padding: 8px 12px;
-      font-size: 14px;
+    padding: 8px 12px;
+    font-size: 14px;
   }
 
   .profile-menu { width: 150px; }
@@ -222,8 +234,8 @@ button:active {
 
 @media (max-width: 480px) {
   #profileButton {
-      padding: 6px 10px;
-      font-size: 12px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   .profile-menu { width: 120px; }
