@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 
 # Configure API key for Gemini
 genai.configure(api_key='AIzaSyCbx-aFssrg7PdNhUPBRSt1Ady6iNyLJVI')
-model = genai.GenerativeModel("gemini-1.5-flash-8B")
+model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Initialize Flask app
 app = Flask(__name__)
