@@ -1,4 +1,3 @@
-import os
 import json
 import google.generativeai as genai
 from flask import Flask, render_template, request
@@ -45,4 +44,4 @@ def symptom_check():
     return json.dumps({'response': response})
 
 if __name__ == '__main__':
-    app.run(debug=True) "implement in this code "
+    app.run(debug=True)
