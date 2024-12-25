@@ -2,15 +2,9 @@ import os
 import json
 import google.generativeai as genai
 from flask import Flask, render_template, request
-import python-dotenv
-
-# Fetch the API key from an environment variable
-api_key = os.getenv('GENAI_API_KEY')
-if not api_key:
-    raise ValueError("API Key for Generative AI is not set in the environment variables.")
 
 # Configure API key for Gemini
-genai.configure(api_key=api_key)
+genai.configure(api_key='AIzaSyCbx-aFssrg7PdNhUPBRSt1Ady6iNyLJVI')
 model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Initialize Flask app
@@ -51,4 +45,4 @@ def symptom_check():
     return json.dumps({'response': response})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) "implement in this code "
