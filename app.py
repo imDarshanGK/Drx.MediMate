@@ -1,7 +1,9 @@
+import os
 import json
 import google.generativeai as genai
 from flask import Flask, render_template, request
 
+api_key = os.getenv("Gemini_key")
 # Configure API key for Gemini
 genai.configure(api_key=Gemini_key)
 model = genai.GenerativeModel("gemini-1.5-flash-8b")
