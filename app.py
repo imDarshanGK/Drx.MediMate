@@ -2,6 +2,7 @@ import os
 import json
 import google.generativeai as genai
 from flask import Flask, render_template, request
+import python-dotenv
 
 # Fetch the API key from an environment variable
 api_key = os.getenv('GENAI_API_KEY')
