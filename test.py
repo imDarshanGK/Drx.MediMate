@@ -1,9 +1,12 @@
 import google.generativeai as genai
+import os
 
+# Use the environment variable for the API key
+api_key = os.getenv("GEMINI_KEY")
 
-# Configure API key
-genai.configure(api_key="AIzaSyDMRigxIecZge3rI8Y7_PhHu5_bz_mvz1Y")
-model = genai.GenerativeModel("gemini-1.5-flash")
+# Configure API key for Gemini
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Function to get drug information
 def get_drug_information(drug_name):
