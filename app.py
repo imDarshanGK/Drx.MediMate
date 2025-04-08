@@ -11,7 +11,7 @@ api_key = os.getenv("GEMINI_KEY")
 genai.configure(api_key=api_key)
 
 # Load Gemini model
-model = genai.GenerativeModel("gemini-1.5-flash-8b")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -34,15 +34,24 @@ Clarify this is educational and not a substitute for diagnosis."""
 
 # Function: Analyze medicine image using Gemini Vision
 def analyze_image_with_gemini(image_data):
-    image = Image.open(BytesIO(base64.b64decode(image_data.split(',')[1])))
-    gemini_image = {
-        "mime_type": "image/png",
-        "data": image
-    }
-    prompt = """Analyze this image of a medicine or drug packaging. Identify the drug name, manufacturer (if visible), and give a brief summary.
-Only answer if the image is clear. If not, politely ask the user to retake the image."""
-    response = model.generate_content([prompt, gemini_image])
-    return response.text
+    try:
+        # Decode base64 string to raw image bytes
+        image_base64 = image_data.split(',')[1]
+        image_bytes = base64.b64decode(image_base64)
+
+        # Convert to PIL Image (what Gemini expects)
+        image = Image.open(BytesIO(image_bytes))
+
+        prompt = """Analyze this image of a medicine or drug packaging. 
+Identify the drug name, manufacturer (if visible), and give a brief clinical summary.
+If the image is blurry or unclear, ask the user to retake it politely."""
+
+        # Use Gemini Vision with image + prompt
+        response = model.generate_content([prompt, image])
+        return response.text
+
+    except Exception as e:
+        return f"❌ Error during image analysis: {str(e)}"
 
 # Routes
 @app.route('/')
@@ -86,12 +95,10 @@ def symptom_check():
 def process_upload():
     image_data = request.form.get("image_data")
     if image_data:
-        try:
-            result = analyze_image_with_gemini(image_data)
-            return render_template("upload_image.html", result=result)
-        except Exception as e:
-            return render_template("upload_image.html", result="❌ Error analyzing image: " + str(e))
+        result = analyze_image_with_gemini(image_data)
+        return render_template("upload_image.html", result=result)
     return render_template("upload_image.html", result="❌ No image data received.")
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
