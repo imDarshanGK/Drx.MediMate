@@ -8,7 +8,7 @@
 
   <style>
     body {
-      background-color: #f0f8ff; /* Light medical blue */
+      background-color: #f0f8ff;
       font-family: 'Segoe UI', sans-serif;
     }
     .card {
@@ -69,7 +69,8 @@
       </div>
 
       <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
-        <button class="btn btn-med" onclick="captureImage()">Capture Image</button>
+        <button class="btn btn-med" onclick="captureImage()">📸 Capture Image</button>
+        <button class="btn btn-outline-primary" onclick="switchCamera()">🔄 Switch Camera</button>
       </div>
 
       <form method="POST" action="/process-upload" enctype="multipart/form-data">
@@ -93,17 +94,23 @@
     const canvas = document.createElement('canvas');
     const preview = document.getElementById('preview');
     const imageDataInput = document.getElementById('imageDataInput');
-    let stream;
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(s => {
-        stream = s;
+    let stream;
+    let usingFrontCamera = false;
+
+    async function startCamera(facingMode = "environment") {
+      stopCamera();
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: facingMode } },
+          audio: false
+        });
         video.srcObject = stream;
-      })
-      .catch(err => {
-        alert("Camera access denied or not available.");
-        console.error(err);
-      });
+      } catch (err) {
+        console.error("Camera error:", err);
+        alert("Camera access failed. Try switching the camera or reload.");
+      }
+    }
 
     function stopCamera() {
       if (stream) {
@@ -118,7 +125,7 @@
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const dataURL = canvas.toDataURL('image/png');
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7); // smaller image size
       imageDataInput.value = dataURL;
 
       preview.src = dataURL;
@@ -127,6 +134,17 @@
 
       stopCamera();
     }
+
+    function switchCamera() {
+      usingFrontCamera = !usingFrontCamera;
+      const mode = usingFrontCamera ? "user" : "environment";
+      startCamera(mode);
+      video.classList.remove('d-none');
+      preview.classList.add('d-none');
+    }
+
+    // Start default rear camera on load
+    window.onload = () => startCamera("environment");
   </script>
 </body>
 </html>
