@@ -1,30 +1,50 @@
-import json
-import google.generativeai as genai
-from flask import Flask, render_template, request
 import os
+import json
+import base64
+from flask import Flask, render_template, request
+from PIL import Image
+from io import BytesIO
+import google.generativeai as genai
 
-# Use the environment variable for the API key
+# Load Gemini API key
 api_key = os.getenv("GEMINI_KEY")
-
-# Configure API key for Gemini
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-1.5-flash-8b")
+
+# Load Gemini model
+model = genai.GenerativeModel("gemini-1.5-pro-vision")
 
 # Initialize Flask app
 app = Flask(__name__)
 
-# Function to get drug information
+# Function: Get drug info from text
 def get_drug_information(drug_name):
-    prompt = f"Provide a clinical summary for pharmacists on the drug {drug_name}. Include its therapeutic uses, standard dosage guidelines, common and serious side effects, contraindications, and important drug interactions. Focus on details relevant for medical decision-making, emphasizing efficient and safe use for patient care."
+    prompt = f"""Provide a clinical summary for pharmacists on the drug {drug_name}.
+Include therapeutic uses, standard dosage, common & serious side effects, contraindications, and important drug interactions.
+Focus on safe & efficient patient care."""
     response = model.generate_content(prompt)
     return response.text
 
-# Function to check symptoms and recommend drugs
+# Function: Recommend drugs based on symptoms
 def symptom_checker(symptoms):
-    prompt = f"Given these symptoms: {symptoms}, suggest evidence-based, over-the-counter treatment options. Include possible side effects, drug interactions, and safety information to guide pharmacists. Ensure that the suggestions prioritize patient safety and reflect the latest clinical guidelines. Emphasize that this is for educational reference only and not a substitute for professional diagnosis."
+    prompt = f"""Given the symptoms: {symptoms}, recommend over-the-counter treatment options.
+Include side effects, interactions, and safety tips for pharmacists. 
+Clarify this is educational and not a substitute for diagnosis."""
     response = model.generate_content(prompt)
     return response.text
 
+# Function: Analyze medicine image using Gemini Vision
+def analyze_image_with_gemini(image_data):
+    image = Image.open(BytesIO(base64.b64decode(image_data.split(',')[1])))
+    gemini_image = {
+        "mime_type": "image/png",
+        "data": image
+    }
+    prompt = """Analyze this image of a medicine or drug packaging. Identify the drug name, manufacturer (if visible), and give a brief summary.
+Only answer if the image is clear. If not, politely ask the user to retake the image."""
+    response = model.generate_content([prompt, gemini_image])
+    return response.text
+
+# Routes
 @app.route('/')
 def sisu():
     return render_template('sisu.html')
@@ -45,6 +65,7 @@ def symptom_checker_page():
 def upload_image_page():
     return render_template('upload_image.html')
 
+# AJAX drug info
 @app.route('/get_drug_info', methods=['POST'])
 def get_drug_info():
     data = request.get_json()
@@ -52,12 +73,25 @@ def get_drug_info():
     response = get_drug_information(drug_name)
     return json.dumps({'response': response})
 
+# AJAX symptom checker
 @app.route('/symptom_checker', methods=['POST'])
 def symptom_check():
     data = request.get_json()
     symptoms = data.get('symptoms')
     response = symptom_checker(symptoms)
     return json.dumps({'response': response})
+
+# POST route for uploaded image
+@app.route('/process-upload', methods=['POST'])
+def process_upload():
+    image_data = request.form.get("image_data")
+    if image_data:
+        try:
+            result = analyze_image_with_gemini(image_data)
+            return render_template("upload_image.html", result=result)
+        except Exception as e:
+            return render_template("upload_image.html", result="❌ Error analyzing image: " + str(e))
+    return render_template("upload_image.html", result="❌ No image data received.")
 
 if __name__ == '__main__':
     app.run(debug=True)
