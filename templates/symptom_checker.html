@@ -20,9 +20,17 @@
       color: white;
       border-radius: 10px;
       font-weight: 600;
+      position: relative;
     }
-    .btn-checker:hover {
-      background-color: #007f72;
+    .btn-checker:disabled {
+      background-color: #009688;
+      cursor: not-allowed;
+    }
+    .spinner-border {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: 8px;
+      vertical-align: text-bottom;
     }
     .result-box {
       white-space: pre-wrap;
@@ -30,6 +38,7 @@
       padding: 15px;
       background-color: #f8fdfa;
       border-radius: 10px;
+      font-family: 'Courier New', monospace;
     }
   </style>
 </head>
@@ -44,7 +53,7 @@
         <textarea id="symptoms" class="form-control" rows="5" placeholder="e.g. sore throat, mild fever, headache..."></textarea>
       </div>
       <div class="d-grid gap-2">
-        <button class="btn btn-checker" onclick="checkSymptoms()">🔍 Analyze Symptoms</button>
+        <button id="analyzeBtn" class="btn btn-checker" onclick="checkSymptoms()">🔍 Analyze Symptoms</button>
       </div>
     </div>
 
@@ -57,10 +66,20 @@
   <script>
     function checkSymptoms() {
       const symptoms = document.getElementById("symptoms").value;
+      const button = document.getElementById("analyzeBtn");
+      const resultDiv = document.getElementById("result");
+      const aiResponse = document.getElementById("aiResponse");
+
       if (!symptoms.trim()) {
         alert("Please enter some symptoms.");
         return;
       }
+
+      // Show loading state
+      button.disabled = true;
+      button.innerHTML = `Analyzing... <span class="spinner-border spinner-border-sm"></span>`;
+      resultDiv.style.display = "none";
+      aiResponse.innerText = "";
 
       fetch("/symptom_checker", {
         method: "POST",
@@ -69,12 +88,16 @@
       })
       .then(res => res.json())
       .then(data => {
-        document.getElementById("aiResponse").innerText = data.response;
-        document.getElementById("result").style.display = "block";
+        aiResponse.innerText = data.response;
+        resultDiv.style.display = "block";
       })
       .catch(err => {
-        document.getElementById("aiResponse").innerText = "❌ An error occurred while analyzing symptoms.";
-        document.getElementById("result").style.display = "block";
+        aiResponse.innerText = "❌ An error occurred while analyzing symptoms.";
+        resultDiv.style.display = "block";
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.innerHTML = "🔍 Analyze Symptoms";
       });
     }
   </script>
