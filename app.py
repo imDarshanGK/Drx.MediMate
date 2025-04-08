@@ -33,6 +33,18 @@ def sisu():
 def index():
     return render_template('index.html')
 
+@app.route('/drug-info-page')
+def drug_info_page():
+    return render_template('drug_info.html')
+
+@app.route('/symptom-checker-page')
+def symptom_checker_page():
+    return render_template('symptom_checker.html')
+
+@app.route('/upload-image-page')
+def upload_image_page():
+    return render_template('upload_image.html')
+
 @app.route('/get_drug_info', methods=['POST'])
 def get_drug_info():
     data = request.get_json()
