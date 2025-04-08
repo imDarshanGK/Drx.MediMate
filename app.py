@@ -11,7 +11,7 @@ api_key = os.getenv("GEMINI_KEY")
 genai.configure(api_key=api_key)
 
 # Load Gemini model
-model = genai.GenerativeModel("gemini-1.5-pro-vision")
+model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Initialize Flask app
 app = Flask(__name__)
