@@ -42,24 +42,31 @@
   </div>
 
   <script>
-    function checkSymptoms() {
-      const symptoms = document.getElementById('symptoms').value.trim();
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = "⏳ Analyzing symptoms...";
-
-      fetch('/symptom_checker', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symptoms })
-      })
-      .then(response => response.json())
-      .then(data => {
-        resultDiv.innerHTML = "💡 AI Recommendation:\n\n" + data.response;
-      })
-      .catch(err => {
-        resultDiv.innerHTML = "❌ Error: " + err;
-      });
-    }
-  </script>
+    document.getElementById("symptomForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const symptoms = document.getElementById("symptoms").value;
+    
+        fetch('/symptom_checker', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ symptoms: symptoms }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Server error: " + response.status);
+            }
+            return response.json();  // this will fail if it's not valid JSON
+        })
+        .then(data => {
+            document.getElementById("response").innerText = data.response;
+        })
+        .catch(error => {
+            document.getElementById("response").innerText = "❌ Error: " + error.message;
+        });
+    });
+    </script>
+    
 </body>
 </html>

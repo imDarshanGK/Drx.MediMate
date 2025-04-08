@@ -102,11 +102,15 @@ def symptom_check():
         data = request.get_json()
         symptoms = data.get('symptoms')
         if not symptoms:
-            return jsonify({'response': '❌ No symptoms provided'}), 400
+            return jsonify({'response': '❌ No symptoms provided.'}), 400
+
         response = symptom_checker(symptoms)
         return jsonify({'response': response})
+
     except Exception as e:
+        print(f"❌ Exception: {str(e)}")  # Logs in terminal
         return jsonify({'response': f"❌ Error: {str(e)}"}), 500
+
 
 # Analyze uploaded image
 @app.route('/process-upload', methods=['POST'])
