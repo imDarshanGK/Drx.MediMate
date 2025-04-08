@@ -1,7 +1,7 @@
 import os
 import json
 import base64
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from PIL import Image
 from io import BytesIO
 import google.generativeai as genai
@@ -79,24 +79,34 @@ def upload_image_page():
     return render_template('upload_image.html')
 
 # ---------------------------
-# API Endpoints
+# API Endpoints (AJAX/JS)
 # ---------------------------
 
 # Drug info from text input
 @app.route('/get_drug_info', methods=['POST'])
 def get_drug_info():
-    data = request.get_json()
-    drug_name = data.get('drug_name')
-    response = get_drug_information(drug_name)
-    return json.dumps({'response': response})
+    try:
+        data = request.get_json()
+        drug_name = data.get('drug_name')
+        if not drug_name:
+            return jsonify({'response': '❌ No drug name provided'}), 400
+        response = get_drug_information(drug_name)
+        return jsonify({'response': response})
+    except Exception as e:
+        return jsonify({'response': f"❌ Error: {str(e)}"}), 500
 
 # Symptom checker from user input
 @app.route('/symptom_checker', methods=['POST'])
 def symptom_check():
-    data = request.get_json()
-    symptoms = data.get('symptoms')
-    response = symptom_checker(symptoms)
-    return json.dumps({'response': response})
+    try:
+        data = request.get_json()
+        symptoms = data.get('symptoms')
+        if not symptoms:
+            return jsonify({'response': '❌ No symptoms provided'}), 400
+        response = symptom_checker(symptoms)
+        return jsonify({'response': response})
+    except Exception as e:
+        return jsonify({'response': f"❌ Error: {str(e)}"}), 500
 
 # Analyze uploaded image
 @app.route('/process-upload', methods=['POST'])
