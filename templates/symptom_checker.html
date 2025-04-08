@@ -69,18 +69,18 @@
       const button = document.getElementById("analyzeBtn");
       const resultDiv = document.getElementById("result");
       const aiResponse = document.getElementById("aiResponse");
-
+  
       if (!symptoms.trim()) {
         alert("Please enter some symptoms.");
         return;
       }
-
+  
       // Show loading state
       button.disabled = true;
       button.innerHTML = `Analyzing... <span class="spinner-border spinner-border-sm"></span>`;
       resultDiv.style.display = "none";
-      aiResponse.innerText = "";
-
+      aiResponse.innerHTML = "";
+  
       fetch("/symptom_checker", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,11 +88,13 @@
       })
       .then(res => res.json())
       .then(data => {
-        aiResponse.innerText = data.response;
+        // Replace **text** with <strong>text</strong>
+        const formatted = data.response.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        aiResponse.innerHTML = formatted;
         resultDiv.style.display = "block";
       })
       .catch(err => {
-        aiResponse.innerText = "❌ An error occurred while analyzing symptoms.";
+        aiResponse.innerHTML = "❌ An error occurred while analyzing symptoms.";
         resultDiv.style.display = "block";
       })
       .finally(() => {
