@@ -32,8 +32,7 @@ Focus on safe & efficient patient care."""
 # Function: Recommend drugs based on symptoms
 def get_symptom_recommendation(symptoms):  # 🔁 Renamed
     prompt = f"""Given the symptoms: {symptoms}, recommend over-the-counter treatment options.
-Include side effects, interactions, and safety tips for pharmacists. 
-Clarify this is educational and not a substitute for diagnosis."""
+Include side effects, interactions, and safety tips for pharmacists. make it short and point wise and don't give disclamer."""
     response = model.generate_content(prompt)
     return response.text
 
