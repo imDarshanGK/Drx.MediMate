@@ -29,12 +29,14 @@ Focus on safe & efficient patient care."""
     return response.text
 
 # 2. Symptom checker (OTC recommendation)
-def symptom_checker(symptoms):
+# Function: Recommend drugs based on symptoms
+def get_symptom_recommendation(symptoms):  # 🔁 Renamed
     prompt = f"""Given the symptoms: {symptoms}, recommend over-the-counter treatment options.
 Include side effects, interactions, and safety tips for pharmacists. 
 Clarify this is educational and not a substitute for diagnosis."""
     response = model.generate_content(prompt)
     return response.text
+
 
 # 3. Analyze medicine image
 def analyze_image_with_gemini(image_data):
@@ -98,10 +100,16 @@ def get_drug_info():
 # Symptom checker from user input
 @app.route('/symptom_checker', methods=['POST'])
 def symptom_check():
-    data = request.get_json()
-    symptoms = data.get('symptoms')
-    response = symptom_checker(symptoms)
-    return json.dumps({'response': response})
+    try:
+        data = request.get_json()
+        symptoms = data.get('symptoms')
+        if not symptoms:
+            return json.dumps({'response': '❌ No symptoms provided.'})
+
+        result = get_symptom_recommendation(symptoms)
+        return json.dumps({'response': result})
+    except Exception as e:
+        return json.dumps({'response': f'❌ Error during analysis: {str(e)}'})
 
 
 # Analyze uploaded image
