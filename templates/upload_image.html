@@ -55,6 +55,13 @@
       padding: 15px;
       border-radius: 10px;
       white-space: pre-wrap;
+      font-family: 'Courier New', monospace;
+    }
+    .spinner-border {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: 8px;
+      vertical-align: text-bottom;
     }
   </style>
 </head>
@@ -73,19 +80,19 @@
         <button class="btn btn-outline-primary" onclick="switchCamera()">🔄 Switch Camera</button>
       </div>
 
-      <form method="POST" action="/process-upload" enctype="multipart/form-data">
+      <form id="uploadForm" method="POST" action="/process-upload" enctype="multipart/form-data" onsubmit="return handleSubmit(event)">
         <input type="hidden" name="image_data" id="imageDataInput">
         <div class="d-grid">
-          <button type="submit" class="btn btn-success mt-3">🔍 Analyze with Gemini Vision</button>
+          <button id="analyzeBtn" type="submit" class="btn btn-success mt-3">
+            🔍 Analyze with Gemini Vision
+          </button>
         </div>
       </form>
 
-      {% if result %}
-        <div class="result-box mt-4">
-          <h5 class="text-primary">🧠 AI Result:</h5>
-          <p>{{ result }}</p>
-        </div>
-      {% endif %}
+      <div id="resultBox" class="result-box mt-4" style="display: none;">
+        <h5 class="text-primary">🧠 AI Result:</h5>
+        <div id="resultText">Thinking...</div>
+      </div>
     </div>
   </div>
 
@@ -94,6 +101,9 @@
     const canvas = document.createElement('canvas');
     const preview = document.getElementById('preview');
     const imageDataInput = document.getElementById('imageDataInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultBox = document.getElementById('resultBox');
+    const resultText = document.getElementById('resultText');
 
     let stream;
     let usingFrontCamera = false;
@@ -125,7 +135,7 @@
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const dataURL = canvas.toDataURL('image/jpeg', 0.7); // smaller image size
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7);
       imageDataInput.value = dataURL;
 
       preview.src = dataURL;
@@ -143,7 +153,38 @@
       preview.classList.add('d-none');
     }
 
-    // Start default rear camera on load
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      resultText.innerHTML = `⏳ Analyzing image with Gemini Vision... <span class="spinner-border spinner-border-sm"></span>`;
+      resultBox.style.display = "block";
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = `Analyzing... <span class="spinner-border spinner-border-sm"></span>`;
+
+      const formData = new FormData(document.getElementById('uploadForm'));
+
+      fetch("/process-upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const formatted = (data.result || "No result returned from AI.").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        resultText.innerHTML = formatted;
+      })
+      .catch(err => {
+        console.error(err);
+        resultText.innerHTML = "❌ An error occurred while analyzing the image.";
+      })
+      .finally(() => {
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = "🔍 Analyze with Gemini Vision";
+      });
+
+      return false;
+    }
+
     window.onload = () => startCamera("environment");
   </script>
 </body>
