@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../static/css/sisu.css">
     <script type="module" src="../static/js/firebaseauth.js"></script>
+    <style>
+        .google-login button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .google-login button i {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
     <!-- Registration Form -->
@@ -34,7 +50,7 @@
                 <input type="password" id="rPassword" placeholder="" required>
                 <label for="rPassword">Password</label>
             </div>
-            <button  id="submitSignUp">Sign Up</button>
+            <button id="submitSignUp">Sign Up</button>
         </form>
         <p class="or">---------- or --------</p>
         <div class="links">
@@ -63,6 +79,9 @@
             </p>
             <button id="submitSignIn">Sign In</button>
         </form>
+        <div class="google-login">
+            <button id="googleSignIn"><i class="fab fa-google"></i> Sign in with Google</button>
+        </div>
         <p class="or">---------- or --------</p>
         <div class="links">
             <p>Don't have an account yet?</p>
@@ -97,7 +116,9 @@
             createUserWithEmailAndPassword,
             signInWithEmailAndPassword,
             sendEmailVerification,
-            sendPasswordResetEmail
+            sendPasswordResetEmail,
+            GoogleAuthProvider,
+            signInWithPopup
         } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
         import {
             getFirestore,
@@ -118,8 +139,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
         const db = getFirestore();
+        const provider = new GoogleAuthProvider();
 
-        // ✅ Redirect if user is already logged in and verified
         onAuthStateChanged(auth, (user) => {
             if (user && user.emailVerified) {
                 window.location.href = "index.html";
@@ -136,7 +157,7 @@
             }, 5000);
         }
 
-        // Signup
+        // Sign Up
         document.getElementById('submitSignUp').addEventListener('click', (event) => {
             event.preventDefault();
             const email = document.getElementById('rEmail').value;
@@ -204,6 +225,31 @@
             sendPasswordResetEmail(auth, recoverEmail)
                 .then(() => showMessage('Recovery email sent. Check your inbox.', 'recoverMessage'))
                 .catch(error => showMessage(error.message, 'recoverMessage'));
+        });
+
+        // Google Sign In
+        document.getElementById('googleSignIn').addEventListener('click', (event) => {
+            event.preventDefault();
+
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    const nameParts = user.displayName ? user.displayName.split(' ') : ["", ""];
+
+                    const userRef = doc(db, "users", user.uid);
+                    setDoc(userRef, {
+                        email: user.email,
+                        firstName: nameParts[0],
+                        lastName: nameParts[1]
+                    }, { merge: true });
+
+                    localStorage.setItem('loggedInUserId', user.uid);
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    console.error("Google Sign-In Error:", error);
+                    showMessage("Google sign-in failed. Try again.", 'signInMessage');
+                });
         });
     </script>
 </body>
