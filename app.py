@@ -91,6 +91,10 @@ def analyze_image_with_gemini(image_data):
 def sisu():
     return render_template('sisu.html')
 
+@app.route('/index.html')
+def index():
+    return render_template('index.html')
+
 @app.route('/drug-info-page')
 def drug_info_page():
     return render_template('drug_info.html')
