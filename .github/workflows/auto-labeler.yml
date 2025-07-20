@@ -1,0 +1,33 @@
+name: "Auto Labeler"
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Apply labels to PR
+      if: github.event_name == 'pull_request'
+      uses: actions/labeler@v5
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: '.github/labeler.yml'
+        
+    - name: Apply labels to issue
+      if: github.event_name == 'issues'
+      uses: actions/labeler@v5
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: '.github/labeler.yml'

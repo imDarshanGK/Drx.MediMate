@@ -1,0 +1,49 @@
+name: "Welcome"
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Welcome first-time contributors
+      uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: |
+          👋 Welcome to **Drx.MediMate**! 
+          
+          Thanks for opening your first issue! We're excited to have you as part of our community. 
+          
+          🦖 **Aditi** is your AI-powered pharmaceutical assistant, and we appreciate your contribution to making healthcare information more accessible.
+          
+          Please make sure to:
+          - Provide clear and detailed information about the issue
+          - Include steps to reproduce if it's a bug
+          - Follow our contributing guidelines in the README
+          
+          A maintainer will review your issue soon. Thank you for helping us improve! 🚀
+          
+        pr-message: |
+          🎉 Welcome to **Drx.MediMate**! 
+          
+          Thanks for opening your first pull request! We're thrilled to have you contribute to our project.
+          
+          🦖 **Aditi** benefits greatly from community contributions like yours that help make pharmaceutical information more accessible to everyone.
+          
+          Please make sure your PR:
+          - Follows our coding standards
+          - Includes appropriate tests if applicable
+          - Has a clear description of the changes
+          - References any related issues
+          
+          Our maintainers will review your contribution shortly. Thanks for being part of our community! 🌟
