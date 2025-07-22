@@ -1,7 +1,7 @@
 import google.generativeai as genai
 
 # Configure API key for Gemini
-genai.configure(api_key="AIzaSyDGcdZeM0p1amoU4zGWpH7atmKS3ROxGko")
+genai.configure(api_key="AIzaSyDGc-")
 model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 def cyber_attack_response(query):
