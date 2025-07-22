@@ -6,6 +6,7 @@ from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
 import google.generativeai as genai
+import markdown
 
 # ---------------------------
 # Configuration & Setup
@@ -32,32 +33,57 @@ def api_response(message, status=200):
     """Standard JSON response helper"""
     return jsonify({'response': message}), status
 
+def format_markdown_response(text):
+    """Convert Markdown text to HTML for consistent, readable output"""
+    if not text or text.startswith("❌"):
+        return text  # Return error messages as-is
+    # Convert Markdown to HTML
+    html = markdown.markdown(text, extensions=['extra', 'fenced_code'])
+    # Wrap in a styled div for better presentation
+    return f'<div class="markdown-content">{html}</div>'
+
 # ---------------------------
 # AI Functions
 # ---------------------------
 
 def get_drug_information(drug_name):
     prompt = (
-        f"Provide a brief clinical summary for pharmacists on the drug {drug_name}:\n"
-        "- Therapeutic uses\n"
-        "- Standard dosage\n"
-        "- Common & serious side effects\n"
-        "- Contraindications\n"
-        "- Important drug interactions\n"
-        "Answer concisely in bullet points suitable for quick reference."
+        f"Provide a brief clinical summary for pharmacists on the drug **{drug_name}** in Markdown format:\n"
+        "## Therapeutic Uses\n"
+        "- List primary therapeutic uses\n"
+        "## Standard Dosage\n"
+        "- Provide standard adult dosage (include administration route and frequency)\n"
+        "## Common Side Effects\n"
+        "- List common side effects\n"
+        "## Serious Side Effects\n"
+        "- List serious side effects requiring immediate attention\n"
+        "## Contraindications\n"
+        "- List conditions or scenarios where the drug should not be used\n"
+        "## Important Drug Interactions\n"
+        "- List significant drug interactions\n"
+        "Use concise bullet points. Ensure clarity and professional tone."
     )
     response = model.generate_content(prompt)
-    return response.text.strip() if response and hasattr(response, 'text') else "❌ No response from AI."
+    text = response.text.strip() if response and hasattr(response, 'text') else "❌ No response from AI."
+    return format_markdown_response(text)
 
 def get_symptom_recommendation(symptoms):
     prompt = (
-        f"Given the symptoms: {symptoms}, recommend over-the-counter treatment options."
-        " List common side effects, important interactions, and safety tips. "
-        " If symptoms suggest a medical emergency or severe condition, recommend immediate doctor consultation. "
-        "Respond concisely in bullet points without disclaimers."
+        f"Given the symptoms: **{symptoms}**, recommend over-the-counter treatment options in Markdown format:\n"
+        "## Recommended Over-the-Counter Treatments\n"
+        "- List appropriate OTC medications or treatments\n"
+        "## Common Side Effects\n"
+        "- List common side effects of recommended treatments\n"
+        "## Important Interactions\n"
+        "- List significant drug or condition interactions\n"
+        "## Safety Tips\n"
+        "- Provide key safety tips or precautions\n"
+        "If symptoms suggest a medical emergency or severe condition, clearly state: **'Seek immediate medical attention.'** "
+        "Use concise bullet points in Markdown format. Avoid disclaimers."
     )
     response = model.generate_content(prompt)
-    return response.text.strip() if response and hasattr(response, 'text') else "❌ No response from AI."
+    text = response.text.strip() if response and hasattr(response, 'text') else "❌ No response from AI."
+    return format_markdown_response(text)
 
 def analyze_image_with_gemini(image_data):
     try:
@@ -69,16 +95,23 @@ def analyze_image_with_gemini(image_data):
         image = Image.open(BytesIO(image_bytes))
 
         prompt = (
-            "Analyze this image of a medicine or drug packaging. "
-            "Identify the drug name, manufacturer (if visible), and give a brief clinical summary. "
-            "If the image is blurry or unclear, politely ask the user to retake it."
+            "Analyze this image of a medicine or drug packaging. Provide the response in Markdown format:\n"
+            "## Drug Information\n"
+            "- **Drug Name**: Identify the drug name (if visible)\n"
+            "- **Manufacturer**: Identify the manufacturer (if visible)\n"
+            "## Clinical Summary\n"
+            "- **Therapeutic Uses**: List primary uses\n"
+            "- **Standard Dosage**: Provide standard dosage\n"
+            "- **Common Side Effects**: List common side effects\n"
+            "- **Serious Side Effects**: List serious side effects\n"
+            "- **Contraindications**: List contraindications\n"
+            "- **Important Interactions**: List significant interactions\n"
+            "If the image is blurry or unclear, respond with: **'Please retake the image for better clarity.'**"
         )
 
         response = model.generate_content([prompt, image])
-        text = response.text.strip() if response and hasattr(response, 'text') else None
-        if not text:
-            return "❌ Analysis failed or empty response from AI."
-        return text
+        text = response.text.strip() if response and hasattr(response, 'text') else "❌ Analysis failed or empty response from AI."
+        return format_markdown_response(text)
 
     except Exception as e:
         return f"❌ Error during image analysis: {str(e)}"
@@ -143,7 +176,6 @@ def process_upload():
         return render_template("upload_image.html", result=result)
     return render_template("upload_image.html", result="❌ No image data received.")
 
-###############################################
 @app.route('/my-account')
 def my_account():
     return render_template('my_account.html', user={
@@ -151,7 +183,6 @@ def my_account():
         "email": "demo@example.com",
         "notifications": True
     })
-###############################################
 
 # ---------------------------
 # Run app
