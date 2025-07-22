@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: write
 
 jobs:
   welcome:
@@ -32,18 +31,3 @@ jobs:
           - Follow our contributing guidelines in the README
           
           A maintainer will review your issue soon. Thank you for helping us improve! 🚀
-          
-        pr-message: |
-          🎉 Welcome to **Drx.MediMate**! 
-          
-          Thanks for opening your first pull request! We're thrilled to have you contribute to our project.
-          
-          🦖 **Aditi** benefits greatly from community contributions like yours that help make pharmaceutical information more accessible to everyone.
-          
-          Please make sure your PR:
-          - Follows our coding standards
-          - Includes appropriate tests if applicable
-          - Has a clear description of the changes
-          - References any related issues
-          
-          Our maintainers will review your contribution shortly. Thanks for being part of our community! 🌟
