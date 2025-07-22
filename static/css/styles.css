@@ -240,3 +240,24 @@ button:active {
 
   .profile-menu { width: 120px; }
 }
+.markdown-content {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.markdown-content h2 {
+    color: #2c3e50;
+    margin-top: 20px;
+}
+.markdown-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+.markdown-content li {
+    margin-bottom: 8px;
+}
