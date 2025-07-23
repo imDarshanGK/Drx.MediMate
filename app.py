@@ -327,10 +327,11 @@ def process_upload():
     if image_data:
         logging.info("Image data received for analysis")
         result = analyze_image_with_gemini(image_data)
-        return jsonify({"status": "success", "result": result})
+        print(result)
+        return jsonify({'result': result})
     else:
         logging.warning("❌ No image data received in request")
-        return jsonify({"status": "error", "result": "❌ No image data received."}), 400
+    return jsonify({'result': '❌ No image received from camera.'})
 
 # ---------------------------
 # Error Handlers

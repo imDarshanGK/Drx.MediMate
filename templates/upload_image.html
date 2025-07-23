@@ -398,6 +398,10 @@
                 <button class="btn-outline" onclick="resetCamera()" id="resetBtn" style="display: none;">
                     🔃 Reset
                 </button>
+                <label class="btn-outline" style="margin-left: 1rem;">
+                    🖼️ Upload Image
+                    <input type="file" id="uploadInput" accept="image/*" style="display: none;">
+                </label>
             </div>
 
             <form id="uploadForm" method="POST" action="/process-upload" enctype="multipart/form-data" onsubmit="return handleSubmit(event)">
@@ -714,6 +718,26 @@
             showCameraError("Camera not supported in this browser.");
             startCameraBtn.style.display = 'none';
         }
+
+        const uploadInput = document.getElementById('uploadInput');
+
+        uploadInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                video.classList.add('d-none');
+                cameraStatus.classList.add('d-none');
+                imageDataInput.value = e.target.result;
+                analyzeBtn.disabled = false;
+                analyzeBtn.style.backgroundColor = '#10b981';
+                stopCamera();
+            };
+            reader.readAsDataURL(file);
+        });
     </script>
 </body>
 </html>
