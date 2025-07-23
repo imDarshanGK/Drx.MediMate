@@ -278,10 +278,11 @@ def process_upload():
     if image_data:
         logging.info("Image data received for analysis")
         result = analyze_image_with_gemini(image_data)
-        return render_template("upload_image.html", result=result)
+        print(result)
+        return jsonify({'result': result})
     else:
         logging.warning("❌ No image data received in request")
-    return render_template("upload_image.html", result="❌ No image data received.")
+    return jsonify({'result': '❌ No image received from camera.'})
 
 @app.route('/my-account')
 def my_account():
