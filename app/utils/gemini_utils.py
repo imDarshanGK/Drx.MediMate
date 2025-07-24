@@ -2,7 +2,7 @@
 
 
 import base64
-
+import os
 from PIL import Image
 from io import BytesIO
 import google.generativeai as genai
@@ -25,7 +25,7 @@ def format_markdown_response(text):
 
 
 # Load API key from environment variable (recommended) or hardcoded (less secure)
-genai.configure(api_key="AIzaSyBau61msZ_M4Mx37DO6tvhsQPy16y0UDIE")#os.getenv("GEMINI_KEY")
+genai.configure(api_key=os.getenv("GEMINI_KEY"))
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # Retry logic for Gemini calls
