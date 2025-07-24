@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -306,6 +307,10 @@
                     id="symptoms" 
                     placeholder="e.g. sore throat, mild fever, headache..."
                 ></textarea>
+                <button id="mic-button" style="margin-top: 0.75rem; background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
+                    🎤 Speak
+                </button>
+
             </div>
             <button id="analyzeBtn" class="btn-checker" onclick="checkSymptoms()">
                 🔍 Analyze Symptoms
@@ -453,6 +458,52 @@
             }
         });
     </script>
+    <script>
+    const micButton = document.getElementById("mic-button");
+    const textarea = document.getElementById("symptoms");
+
+    let recognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = function () {
+            micButton.innerText = "🎙️ Listening...";
+            micButton.disabled = true;
+        };
+
+        recognition.onend = function () {
+            micButton.innerText = "🎤 Speak";
+            micButton.disabled = false;
+        };
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            if (textarea.value.trim()) {
+                textarea.value += ", " + transcript;
+            } else {
+                textarea.value = transcript;
+            }
+            textarea.focus();
+        };
+
+        recognition.onerror = function (event) {
+            console.error("Speech recognition error:", event.error);
+            micButton.innerText = "🎤 Speak";
+            micButton.disabled = false;
+        };
+
+        micButton.addEventListener("click", () => {
+            recognition.start();
+        });
+    } else {
+        micButton.disabled = true;
+        micButton.innerText = "🎤 Not Supported";
+    }
+  </script>
+
 </body>
 </html>
-
