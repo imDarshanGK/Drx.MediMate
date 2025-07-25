@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()  
 import json
 import base64
 from flask import Flask, render_template, request, jsonify
@@ -9,6 +11,7 @@ import google.generativeai as genai
 import markdown
 import logging
 import time
+
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 
 # ---------------------------
@@ -37,7 +40,7 @@ logging.basicConfig(
 # Retry Helper Function
 # ---------------------------
 
-def gemini_generate_with_retry(prompt, max_retries=3, delay=2, timeout=10):
+def gemini_generate_with_retry(prompt, max_retries=3, delay=2, timeout=20):
     """
     Calls Gemini API with timeout and retry logic.
     - Retries failed calls (with exponential backoff)
@@ -70,7 +73,7 @@ def gemini_generate_with_retry(prompt, max_retries=3, delay=2, timeout=10):
         logging.info(f"⏳ Waiting {wait_time}s before retry attempt {attempt + 2}")
         time.sleep(wait_time)
         attempt += 1
-
+        
     logging.critical("❌ All Gemini API retry attempts failed.")
     return None
 
@@ -125,6 +128,52 @@ def get_drug_information(drug_name):
             return "❌ No response from AI."
     except Exception as e:
         logging.error(f"Exception in get_drug_information: {str(e)}")
+        return f"❌ Error: {str(e)}"
+    
+def predict_disease(symptoms):
+    prompt = (
+        f"""
+            You are a medical assistant powered by the latest knowledge as of October 2023.
+
+            Given the following symptoms: **{symptoms}**, perform a comprehensive analysis to predict the most likely diseases or conditions.
+
+            ### Possible Diseases
+            - List the top 3–5 potential diseases or conditions that match the **combined symptom profile**.
+            - Prioritize common, serious, and high-likelihood conditions.
+
+            ###  Description
+            - For each predicted disease, provide a 1–2 sentence explanation of how the listed symptoms relate to it.
+
+            ### Symptom-wise Breakdown
+            For each symptom, provide:
+                - **Symptom:** [Symptom name]  
+                - **Possible Disease:** [Likely associated disease]  
+                - **Explanation:** [Brief explanation of the relationship between the symptom and the disease]
+
+            ### When to Seek Immediate Medical Attention
+                - Highlight any listed symptoms or symptom combinations that may indicate a medical emergency.
+                - Use clear, layman-friendly language to help the user understand urgency.
+
+            **Instructions:**  
+                - Use Markdown formatting.  
+                - Avoid general disclaimers (e.g., "consult a doctor").  
+                - Ensure clinical relevance and clarity.  
+                - Do not repeat the same disease unless strongly justified.
+        """
+
+    )
+    logging.info(f"Prompt to Gemini for disease prediction: {prompt}")
+    try:
+        response = gemini_generate_with_retry(prompt)
+        if response and hasattr(response, 'text'):
+            text = response.text.strip()
+            logging.info("✅ Received response from Gemini for disease prediction.")
+            return format_markdown_response(text)
+        else:
+            logging.warning("❌ No text in AI response for disease prediction.")
+            return "❌ No response from AI."
+    except Exception as e:
+        logging.error(f"❌ Exception in predict_disease: {str(e)}")
         return f"❌ Error: {str(e)}"
 
 def get_symptom_recommendation(symptoms):
@@ -310,11 +359,17 @@ def symptom_check():
         data = request.get_json()
         logging.info(f"Request JSON: {data}")
         symptoms = data.get('symptoms')
+        action = data.get('action', 'analyze')
         if not symptoms:
             logging.warning("❌ No symptoms provided.")
             return api_response('❌ No symptoms provided.', 400)
-        logging.info(f"Calling get_symptom_recommendation with symptoms: {symptoms}")
-        result = get_symptom_recommendation(symptoms)
+        if action == 'predict':
+            logging.info(f"Calling predict_disease with symptoms: {symptoms}")
+            result = predict_disease(symptoms)
+        else:
+            logging.info(f"Calling get_symptom_recommendation with symptoms: {symptoms}")
+            result = get_symptom_recommendation(symptoms)
+
         return api_response(result)
     except Exception as e:
         logging.error(f"❌ Exception in /symptom_checker: {str(e)}")
