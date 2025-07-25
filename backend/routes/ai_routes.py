@@ -1,6 +1,6 @@
 
 from flask import Blueprint, render_template, request, jsonify
-from app.utils.gemini_utils import (
+from backend.utils.gemini_utils import (
     get_drug_information,
     get_symptom_recommendation,
     analyze_image_with_gemini

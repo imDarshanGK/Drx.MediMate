@@ -1,4 +1,3 @@
-# app/utils/gemini_utils.py
 
 
 import base64
