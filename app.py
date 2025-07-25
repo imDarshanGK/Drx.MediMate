@@ -8,6 +8,9 @@ from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
 import google.generativeai as genai
+from utils.cache import get_cached_drug, set_cached_drug
+from dotenv import load_dotenv
+load_dotenv()
 import markdown
 import logging
 import time
@@ -117,12 +120,20 @@ def get_drug_information(drug_name):
     )
 
     logging.info(f"Prompt to Gemini: {prompt}")
+
+    cached = get_cached_drug(drug_name)
+    if cached:
+        logging.info(f"📦 Cache hit for drug: {drug_name}")
+        return cached
+
     try:
         response = gemini_generate_with_retry(prompt)
         if response and hasattr(response, 'text'):
             text = response.text.strip()
-            logging.info("Received response from Gemini AI.")
-            return format_markdown_response(text)
+            formatted = format_markdown_response(text)
+            set_cached_drug(drug_name, formatted)
+            logging.info("✅ Cached new drug info response.")
+            return formatted
         else:
             logging.warning("No text in AI response.")
             return "❌ No response from AI."
