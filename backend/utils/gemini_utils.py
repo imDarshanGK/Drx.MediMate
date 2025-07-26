@@ -12,6 +12,28 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeou
 
 
 
+# recent feature of cache
+from cachetools import TTLCache
+import threading
+
+# A cache with maxsize 100 items, and TTL of 600 seconds (10 minutes)
+drug_cache = TTLCache(maxsize=100, ttl=600)
+
+# Lock to prevent race conditions in threaded environments (e.g., Flask)
+cache_lock = threading.Lock()
+
+def get_cached_drug(drug_name):
+    key = drug_name.strip().lower()
+    with cache_lock:
+        return drug_cache.get(key)
+
+def set_cached_drug(drug_name, response):
+    key = drug_name.strip().lower()
+    with cache_lock:
+        drug_cache[key] = response
+
+
+
 
 def format_markdown_response(text):
     """Convert Markdown text to HTML for consistent, readable output"""
@@ -24,7 +46,7 @@ def format_markdown_response(text):
 
 
 # Load API key from environment variable (recommended) or hardcoded (less secure)
-genai.configure(api_key=os.getenv("GEMINI_KEY"))
+genai.configure(api_key="AIzaSyBau61msZ_M4Mx37DO6tvhsQPy16y0UDIE")#os.getenv("GEMINI_KEY"))
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # Retry logic for Gemini calls
@@ -91,12 +113,20 @@ def get_drug_information(drug_name):
     )
 
     logging.info(f"Prompt to Gemini: {prompt}")
+
+    cached = get_cached_drug(drug_name)
+    if cached:
+        logging.info(f"📦 Cache hit for drug: {drug_name}")
+        return cached
+
     try:
         response = gemini_generate_with_retry(prompt)
         if response and hasattr(response, 'text'):
             text = response.text.strip()
-            logging.info("Received response from Gemini AI.")
-            return format_markdown_response(text)
+            formatted = format_markdown_response(text)
+            set_cached_drug(drug_name, formatted)
+            logging.info("✅ Cached new drug info response.")
+            return formatted
         else:
             logging.warning("No text in AI response.")
             return "❌ No response from AI."

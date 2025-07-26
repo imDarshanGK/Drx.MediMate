@@ -10,7 +10,7 @@ def create_app():
     CORS(app)
 
     # Load API key
-    api_key = os.getenv("GEMINI_KEY")
+    api_key = "AIzaSyBau61msZ_M4Mx37DO6tvhsQPy16y0UDIE"#os.getenv("GEMINI_KEY")
     if not api_key:
         raise EnvironmentError("❌ GEMINI_KEY not set.")
     genai.configure(api_key=api_key)
