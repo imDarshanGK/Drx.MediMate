@@ -37,20 +37,5 @@ def upload_image():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@ai_bp.route('/validate-prescription', methods=['POST'])
-def validate_prescription():
-    logging.info("📩 API /validate-prescription called")
 
-    image_data = request.form.get("image_data")
-    if image_data:
-        logging.info("📷 Prescription image data received for validation")
-
-        # Process the image with Gemini (replace with your validator logic)
-        result = analyze_prescription_with_gemini(image_data)
-
-        logging.info(f"✅ Gemini result: {result}")
-        return jsonify({'result': result})
-    else:
-        logging.warning("❌ No image data received in /validate-prescription")
-        return jsonify({'result': '❌ No image received for validation.'})
-
+        
