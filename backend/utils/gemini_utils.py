@@ -2,9 +2,11 @@
 
 import base64
 import os
+import io
 from PIL import Image
 from io import BytesIO
 import google.generativeai as genai
+from google.generativeai.types import content_types
 import markdown
 import logging
 import time
@@ -203,6 +205,67 @@ def analyze_image_with_gemini(image_data):
         else:
             logging.warning("❌ Analysis failed or empty AI response.")
             return "❌ Analysis failed or empty response from AI."
+
+    except Exception as e:
+        logging.error(f"❌ Error during image analysis: {str(e)}")
+        return f"❌ Error during image analysis: {str(e)}"
+
+def analyze_prescription_with_gemini(image_data):
+    try:
+        if not image_data.startswith("data:image/"):
+            logging.warning("❌ Invalid image format received.")
+            return "❌ Invalid image format uploaded."
+
+        logging.info("Decoding and processing prescription image for validation...")
+        
+         # Clean base64 string
+        if "," in image_data:
+            image_data = image_data.split(",")[1]
+
+        # Decode base64 to binary
+        image_bytes = base64.b64decode(image_data)
+
+        # Convert to PIL Image
+        image = Image.open(io.BytesIO(image_bytes)) 
+
+        prompt = (
+            "You are a medical assistant AI.\n"
+            "Given an image of a *prescription*, extract and analyze:\n\n"
+            "### Step 1: Extract Prescription Details\n"
+            "- List all *medications/drugs* mentioned.\n"
+            "- Include *dosage, **frequency, and **duration* if visible.\n\n"
+            "### Step 2: Validation\n"
+            "- Check for *duplicate drugs* or overlapping medicines.\n"
+            "- Check for *drug-drug interactions*.\n"
+            "- Flag any *potentially harmful combinations*.\n"
+            "- If dosage looks too high or low, *flag it*.\n\n"
+            "### Output Format (Markdown)\n"
+            "## Extracted Prescription\n"
+            "- Drug 1: [Name], [Dosage], [Frequency], [Duration]\n"
+            "- ...\n\n"
+            "## AI-Powered Feedback\n"
+            "- Safety Warnings:\n"
+            "- Interaction Notes:\n"
+            "- Suggestions:\n\n"
+            "If the image is unclear or handwriting is illegible, reply with:\n"
+            "'⚠ The prescription image is too unclear to read. Please retake it in good lighting.'"
+        )
+
+        logging.info("Sending prescription image to Gemini for validation...")
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content([prompt, image])
+        if response is not None:
+            logging.info(f"Gemini Raw Response: {response}")
+        else:
+            logging.warning("⚠ Gemini response is None.")
+
+        if response and hasattr(response, 'text'):
+            text = response.text.strip()
+            logging.info("✅ Prescription validation complete.")
+            return format_markdown_response(text)
+        else:
+            logging.warning("❌ No response or empty output from Gemini.")
+            return "❌ No useful output received from Gemini."
 
     except Exception as e:
         logging.error(f"❌ Error during image analysis: {str(e)}")
