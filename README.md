@@ -176,11 +176,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## ❤️ Contributors
 
 
-A big thank you to all contributors!
+## 🙌 A Big Thank You to All Contributors!
 
 [![Contributors](https://contrib.rocks/image?repo=MAVERICK-VF142/Drx.MediMate)](https://github.com/MAVERICK-VF142/Drx.MediMate/graphs/contributors)
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="600">
+</p>
+
 
 
 
