@@ -218,7 +218,7 @@ def analyze_prescription_with_gemini(image_data):
 
         logging.info("Decoding and processing prescription image for validation...")
         
-         # Clean base64 string
+        # Clean base64 string
         if "," in image_data:
             image_data = image_data.split(",")[1]
 
