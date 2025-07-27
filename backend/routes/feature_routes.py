@@ -20,6 +20,10 @@ def symptom_checker():
 def upload_image():
     return render_template('upload_image.html')
 
+@feature_bp.route('/prescription-validator-page')
+def prescription_validator():
+    return render_template('prescription_validator.html')
+
 @feature_bp.route('/my-account')
 def my_account():
     return render_template('my_account.html', user={
@@ -50,3 +54,7 @@ def resources():
 @feature_bp.route('/medication-tracker')
 def tracker():
     return render_template('medication_tracker.html')
+
+@feature_bp.route('/allergy-checker')
+def allergy():
+    return render_template('allergy-checker.html')
