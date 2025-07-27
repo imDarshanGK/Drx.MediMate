@@ -8,6 +8,8 @@ import google.generativeai as genai
 def create_app():
     app = Flask(__name__)
     CORS(app)
+    from dotenv import load_dotenv
+    load_dotenv()
 
     # Load API key
     api_key = os.getenv("GEMINI_KEY")
