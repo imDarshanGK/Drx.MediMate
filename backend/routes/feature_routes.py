@@ -54,3 +54,7 @@ def resources():
 @feature_bp.route('/medication-tracker')
 def tracker():
     return render_template('medication_tracker.html')
+
+@feature_bp.route('/allergy-checker')
+def allergy():
+    return render_template('allergy-checker.html')
