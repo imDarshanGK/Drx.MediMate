@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         signUpButton.addEventListener('click', (e) => {
             e.preventDefault();
             showForm(signUpForm);
-            signUpForm.reset();
         });
     }
     
