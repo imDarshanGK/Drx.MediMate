@@ -1,4 +1,4 @@
-
+################ blueprint not registered ----------- this file and these routes are redundent , all thing are implemented in api_routes , so will remove it later after careful inspection
 from flask import Blueprint, render_template, request, jsonify
 from backend.utils.gemini_utils import (
     get_drug_information,

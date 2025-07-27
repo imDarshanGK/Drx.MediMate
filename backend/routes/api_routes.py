@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..utils.gemini_utils import get_drug_information, get_symptom_recommendation, analyze_image_with_gemini, analyze_prescription_with_gemini
+from ..utils.gemini_utils import get_drug_information, get_symptom_recommendation, analyze_image_with_gemini, analyze_prescription_with_gemini, analyze_allergies
 
 import logging
 logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
@@ -81,3 +81,32 @@ def validate_prescription():
     else:
         logging.warning("❌ No image data received in /validate-prescription")
         return jsonify({'result': '❌ No image received for validation.'})
+
+
+@api_bp.route('/allergy_checker', methods=['POST'])
+def allergy_checker():
+    """
+    Endpoint to analyze allergies vs medicines using Gemini.
+    """
+    logging.info("📩 API allergy-checker called")
+
+    try:
+        data = request.get_json()
+        logging.info(f"Request JSON: {data}")
+        allergies = data.get('allergies', '')
+        medicines = data.get('medicines', '')
+
+        if not allergies:
+            logging.warning("❌ No allergies provided.")
+            return api_response('❌ No allergies provided.', 400)
+        if not medicines:
+            logging.warning("❌ No Medicines provided.")
+            return api_response('❌ No Medicines provided.', 400)
+
+        result = analyze_allergies(allergies, medicines)
+        return api_response(result)
+
+    except Exception as e:
+        logging.error(f"❌ Exception in /allergy_checker: {str(e)}")
+        return api_response(f'❌ Error during allergy checking: {str(e)}', 500)
+

@@ -270,3 +270,33 @@ def analyze_prescription_with_gemini(image_data):
     except Exception as e:
         logging.error(f"❌ Error during image analysis: {str(e)}")
         return f"❌ Error during image analysis: {str(e)}"
+    
+
+def analyze_allergies(allergies, medicines):
+    prompt = f"""
+    You are an AI medical assistant.
+    Check the following medicines against these allergies:
+
+    Allergies: {allergies}
+    Medicines: {medicines}
+
+    Provide:
+    - Whether each medicine is safe
+    - Possible allergic reactions or warnings
+    Answer in bullet points.
+    """
+    logging.info(f"Prompt to Gemini for allergy check: {prompt}")
+
+    try:
+        response = gemini_generate_with_retry(prompt)
+        if response and hasattr(response, 'text'):
+            text = response.text.strip()
+            logging.info("Received response from Gemini for symptoms.")
+            return format_markdown_response(text)
+        else:
+            logging.warning("❌ No text in AI response for symptoms.")
+            return "❌ No response from AI."
+    except Exception as e:
+        logging.error(f"❌ Exception in get_symptom_recommendation: {str(e)}")
+        return f"❌ Error: {str(e)}"
+
