@@ -631,12 +631,15 @@
             if (sender === 'assistant' && (message.includes('**') || message.includes('##') || message.includes('* ') || message.includes('\n'))) {
                 // Simple markdown rendering
                 let renderedMessage = message
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-                    .replace(/## (.*?)(\n|$)/g, '<h3 style="margin: 0.5rem 0; color: #1f2937;">$1</h3>') // Headers
-                    .replace(/### (.*?)(\n|$)/g, '<h4 style="margin: 0.5rem 0; color: #374151;">$1</h4>') // Sub-headers
-                    .replace(/\* (.*?)(\n|$)/g, '• $1<br>') // Bullet points
-                    .replace(/\n\n/g, '<br><br>') // Double line breaks
-                    .replace(/\n/g, '<br>'); // Single line breaks
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/### (.*?)(\n|$)/g, '<h4 style="margin: 0.5rem 0; color: #374151;">$1</h4>')
+                .replace(/## (.*?)(\n|$)/g, '<h3 style="margin: 0.5rem 0; color: #1f2937;">$1</h3>')
+                .replace(/\* (.*?)(\n|$)/g, '<li>$1</li>')
+                .replace(/\n\n/g, '</ul><ul style="padding-left: 2rem;">')  // New list on paragraph break
+                .replace(/\n/g, '');
+
+            // Ensure it starts and ends with <ul>
+            renderedMessage = '<ul style="padding-left: 2rem;">' + renderedMessage + '</ul>';
                 
                 messageDiv.innerHTML = renderedMessage;
             } else {
