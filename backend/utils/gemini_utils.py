@@ -1,5 +1,4 @@
 
-
 import base64
 import os
 import io
@@ -299,4 +298,3 @@ def analyze_allergies(allergies, medicines):
     except Exception as e:
         logging.error(f"❌ Exception in get_symptom_recommendation: {str(e)}")
         return f"❌ Error: {str(e)}"
-

@@ -575,6 +575,29 @@
                                 .then(() => {
                                     hideLoading();
                                     showMessage('Account created successfully! Please check your email for verification.', 'signUpMessage', 'success');
+                                    document.getElementById('signUpForm').reset();
+                                    
+                                    //  role-specific fields
+                                    document.querySelectorAll('.role-specific-fields').forEach(field => {
+                                        field.style.display = 'none';
+                                    });
+                                    
+                                    // Reset role selection visuals
+                                    document.querySelectorAll('.role-card').forEach(card => {
+                                        card.classList.remove('selected');
+                                    });
+                                    document.querySelectorAll('input[name="userRole"]').forEach(radio => {
+                                        radio.checked = false;
+                                    });
+                                    
+                                    // Clear remaining values
+                                    document.getElementById('licenseNumber').value = '';
+                                    document.getElementById('medicalLicense').value = '';
+                                    document.getElementById('specialization').value = '';
+                                    document.getElementById('institution').value = '';
+                                    document.getElementById('studentId').value = '';
+                                    document.getElementById('dateOfBirth').value = '';
+                                    document.getElementById('phoneNumber').value = '';
                                 })
                                 .catch((error) => {
                                     hideLoading();
