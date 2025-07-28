@@ -510,6 +510,26 @@
         // Enhanced Sign Up with role data
         document.getElementById('submitSignUp').addEventListener('click', (event) => {
             event.preventDefault();
+            const signUpForm = document.getElementById('signUpForm');
+
+            if (!signUpForm.checkValidity()) {
+                const firstInvalidField = signUpForm.querySelector(':invalid');
+                
+                if (firstInvalidField) {
+                    const parentGroup = firstInvalidField.closest('.form-group');
+
+                    if (parentGroup) {
+                        parentGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+        
+                    firstInvalidField.focus();
+                }
+
+                showMessage('Please fill out all required fields correctly.', 'signUpMessage', 'warning');
+                return;
+            }
             
             const email = document.getElementById('rEmail').value;
             const password = document.getElementById('rPassword').value;
