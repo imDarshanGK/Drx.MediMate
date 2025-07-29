@@ -28,3 +28,11 @@ def student_dashboard():
 @dashboard_bp.route('/patient-dashboard.html')
 def patient_dashboard():
     return render_template('patient-dashboard.html')
+
+@dashboard_bp.route('/my-account')
+def my_account():
+    return render_template('my_account.html', user={
+        "name": "Demo User",
+        "email": "demo@example.com",
+        "notifications": True
+    })
