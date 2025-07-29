@@ -18,3 +18,19 @@
             document.getElementById('recoverPassword').style.display = 'none';
             document.getElementById('signIn').style.display = 'block';
         });
+
+        document.getElementById('signInForm').addEventListener('submit', function (e) {
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (!emailPattern.test(emailInput.value.trim())) {
+                e.preventDefault();
+                emailError.textContent = "Please enter a valid email address.";
+                emailError.style.display = "block";
+            } else {
+                emailError.style.display = "none";
+            }
+        });
