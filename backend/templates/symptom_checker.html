@@ -356,6 +356,10 @@
             animation: profileMenuSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        #myAccount { background: #38dc26; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
+        #myAccount:hover { background: #19a531; }
+
+
         @keyframes profileMenuSlide {
             from {
                 opacity: 0;
@@ -1357,6 +1361,7 @@
                         </div>
                         <div class="user-email" id="loggedUserEmail"></div>
                     </div>
+                    <button id="myAccount">My-Account</button>
                     <button id="logout">
                         <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i>
                         Logout
@@ -1480,6 +1485,12 @@
     </div>
 
     <script>
+
+        //My-account href
+        document.getElementById('myAccount').addEventListener('click', function () {
+             window.location.href = '/my-account';  
+        });
+
         // Initialize particle system
         function initParticles() {
             const particlesContainer = document.getElementById('particles');
