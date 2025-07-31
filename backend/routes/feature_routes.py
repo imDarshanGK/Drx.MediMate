@@ -28,6 +28,11 @@ def my_account():
         "notifications": True
     })
 
+@feature_bp.route('/drug-comparison')
+def drug_comparison():
+    return render_template('drug_comparison.html')
+
+
 
 # Additional feature routes that may be referenced in the dashboard
 
