@@ -82,7 +82,7 @@ def compare_drugs_summary():
         logging.exception("❌ Exception in /compare_drugs_summary")
         return api_response(f"❌ Internal error: {str(e)}", 500)
 
-      @api_bp.route('/validate-prescription', methods=['POST'])
+@api_bp.route('/validate-prescription', methods=['POST'])
 def validate_prescription():
     logging.info("📩 API /validate-prescription called")
 
