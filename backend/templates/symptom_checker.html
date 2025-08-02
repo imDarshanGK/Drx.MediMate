@@ -356,6 +356,10 @@
             animation: profileMenuSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        #myAccount { background: #38dc26; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
+        #myAccount:hover { background: #19a531; }
+
+
         @keyframes profileMenuSlide {
             from {
                 opacity: 0;
@@ -1357,6 +1361,7 @@
                         </div>
                         <div class="user-email" id="loggedUserEmail"></div>
                     </div>
+                    <button id="myAccount">My-Account</button>
                     <button id="logout">
                         <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i>
                         Logout
@@ -1480,6 +1485,12 @@
     </div>
 
     <script>
+
+        //My-account href
+        document.getElementById('myAccount').addEventListener('click', function () {
+             window.location.href = '/my-account';  
+        });
+
         // Initialize particle system
         function initParticles() {
             const particlesContainer = document.getElementById('particles');
@@ -1700,7 +1711,18 @@
                     progressBar.style.width = '100%';
 
                     setTimeout(() => {
-                        const formatted = data.response.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                         let formatted = data.response
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')                          // Bold
+                    .replace(/### (.*?)(\n|$)/g, '<h4 style="margin: 0.5rem 0; color: #374151;">$1</h4>')  // H4
+                    .replace(/## (.*?)(\n|$)/g, '<h3 style="margin: 0.5rem 0; color: #1f2937;">$1</h3>')   // H3
+                    .replace(/\* (.*?)(\n|$)/g, '<li>$1</li>')                                 // Bullet points
+                    .replace(/\n\n/g, '</ul><ul style="padding-left: 2rem; list-style-type: disc;">')     // New list block
+                    .replace(/\n/g, '');                                                       // Remove leftover newlines
+
+                    // Wrap with <ul> if it contains <li>
+                    if (formatted.includes('<li>')) {
+                        formatted = `<ul style="padding-left: 2rem; list-style-type: disc;">${formatted}</ul>`;
+                }
                         aiResponse.innerHTML = formatted;
                         resultDiv.classList.remove('hidden');
                         progressContainer.classList.add('hidden');

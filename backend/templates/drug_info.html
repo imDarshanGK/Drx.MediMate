@@ -129,6 +129,9 @@
             background: #b91c1c;
         }
 
+        #myAccount { background: #38dc26; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
+        #myAccount:hover { background: #19a531; }
+
         /* Container */
         .container {
             max-width: 1000px;
@@ -384,6 +387,7 @@
                         </div>
                         <div class="user-email" id="loggedUserEmail"></div>
                     </div>
+                    <button id="myAccount">My-Account</button>
                     <button id="logout">Logout</button>
                 </div>
             </div>
@@ -478,7 +482,12 @@
             window.location.href = "/";
           }
         });
-      
+        
+        //My-account href
+        document.getElementById('myAccount').addEventListener('click', function () {
+             window.location.href = '/my-account'; 
+        });
+        
         document.getElementById('logout').addEventListener('click', () => {
           signOut(auth)
             .then(() => {
@@ -631,12 +640,15 @@
             if (sender === 'assistant' && (message.includes('**') || message.includes('##') || message.includes('* ') || message.includes('\n'))) {
                 // Simple markdown rendering
                 let renderedMessage = message
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-                    .replace(/## (.*?)(\n|$)/g, '<h3 style="margin: 0.5rem 0; color: #1f2937;">$1</h3>') // Headers
-                    .replace(/### (.*?)(\n|$)/g, '<h4 style="margin: 0.5rem 0; color: #374151;">$1</h4>') // Sub-headers
-                    .replace(/\* (.*?)(\n|$)/g, '• $1<br>') // Bullet points
-                    .replace(/\n\n/g, '<br><br>') // Double line breaks
-                    .replace(/\n/g, '<br>'); // Single line breaks
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/### (.*?)(\n|$)/g, '<h4 style="margin: 0.5rem 0; color: #374151;">$1</h4>')
+                .replace(/## (.*?)(\n|$)/g, '<h3 style="margin: 0.5rem 0; color: #1f2937;">$1</h3>')
+                .replace(/\* (.*?)(\n|$)/g, '<li>$1</li>')
+                .replace(/\n\n/g, '</ul><ul style="padding-left: 2rem;">')  // New list on paragraph break
+                .replace(/\n/g, '');
+
+            // Ensure it starts and ends with <ul>
+            renderedMessage = '<ul style="padding-left: 2rem;">' + renderedMessage + '</ul>';
                 
                 messageDiv.innerHTML = renderedMessage;
             } else {

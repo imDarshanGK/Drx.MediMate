@@ -109,6 +109,10 @@
             background: #b91c1c;
         }
 
+        #myAccount { background: #38dc26; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
+        #myAccount:hover { background: #19a531; }
+
+
         /* Container */
         .container {
             max-width: 1200px;
@@ -510,6 +514,8 @@
                     <span class="role-badge" id="userRole">...</span>
                 </div>
                 <button id="logout" class="logout-btn">Logout</button>
+                <button id="myAccount">My-Account</button>
+
             </div>
         </div>
     </div>
@@ -635,7 +641,16 @@
                         title: "Drug Comparison",
                         description: "Compare drugs side-by-side using AI-powered info.",
                         allowed: true
+                    },
+                    {
+                        href: "allergy-checker",
+                        icon: "⚕️",
+                        iconClass: "symptom-icon",
+                        title: "Allergy Checker",
+                        description: "AI-powered tool to check medicine safety based on your allergies.",
+                        allowed: true
                     }
+
                 ]
             },
             doctor: {
@@ -688,6 +703,14 @@
                         iconClass: "drug-icon",
                         title: "Drug Comparison",
                         description: "Compare drugs side-by-side using AI-powered info.",
+                        allowed: true,
+                    },
+                    {
+                        href: "allergy-checker",
+                        icon: "⚕️",
+                        iconClass: "symptom-icon",
+                        title: "Allergy Checker",
+                        description: "AI-powered tool to check medicine safety based on your allergies.",
                         allowed: true
                     }
 
@@ -744,6 +767,14 @@
                         title: "Drug Comparison",
                         description: "Compare drugs side-by-side using AI-powered info.",
                         allowed: true
+                    },
+                    {
+                        href: "allergy-checker",
+                        icon: "⚕️",
+                        iconClass: "symptom-icon",
+                        title: "Allergy Checker",
+                        description: "AI-powered tool to check medicine safety based on your allergies.",
+                        allowed: true
                     }
 
                 ]
@@ -785,6 +816,14 @@
                         allowed: true
                     },
                     {
+                        href: "prescription-validator-page",
+                        icon: "📝",
+                        iconClass: "camera-icon",
+                        title: "Prescription Validator",
+                        description: "Validate your medical prescription by photo.",
+                        allowed: true
+                    },
+                    {
                         href: "#",
                         icon: "💊",
                         iconClass: "drug-icon",
@@ -798,6 +837,14 @@
                         iconClass: "drug-icon",
                         title: "Drug Comparison",
                         description: "Compare drugs side-by-side using AI-powered info.",
+                        allowed: true
+                    },
+                    {
+                        href: "allergy-checker",
+                        icon: "⚕️",
+                        iconClass: "symptom-icon",
+                        title: "Allergy Checker",
+                        description: "AI-powered tool to check medicine safety based on your allergies.",
                         allowed: true
                     }
 
@@ -983,6 +1030,11 @@
             } else {
                 window.location.href = "sisu.html";
             }
+        });
+
+        //My-account href
+        document.getElementById('myAccount').addEventListener('click', function () {
+             window.location.href = '/my-account';  
         });
 
         // Logout functionality

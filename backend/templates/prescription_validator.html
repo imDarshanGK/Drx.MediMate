@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Medicine Image - Aditi</title>
+    <title>Prescription Validator - Aditi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         * {
@@ -18,7 +18,7 @@
             line-height: 1.6;
         }
 
-        /* Header - EXACT SAME AS DRUG_INFO */
+        /* Header - EXACT SAME AS DRUG_INFO AND UPLOAD_IMAGE */
         .header {
             background: white;
             border-bottom: 1px solid #e5e7eb;
@@ -58,7 +58,7 @@
             text-decoration: underline;
         }
 
-        /* Profile - EXACT SAME AS DRUG_INFO */
+        /* Profile - EXACT SAME AS DRUG_INFO AND UPLOAD_IMAGE*/
         .profile-container {
             position: relative;
         }
@@ -353,12 +353,12 @@
     </style>
 </head>
 <body>
-    <!-- Header - EXACT SAME AS DRUG_INFO -->
+    <!-- Header - EXACT SAME AS DRUG_INFO AND UPLOAD_IMAGE -->
     <div class="header">
         <div class="header-content">
             <div class="logo">🏥 Aditi</div>
             <div class="breadcrumb">
-                <a href="index.html">🏠 Home</a> / Medicine Scanner
+                <a href="index.html">🏠 Home</a> / Prescription Validator
             </div>
             <div class="profile-container">
                 <button id="profileButton" onclick="toggleProfileMenu()">Profile</button>
@@ -377,8 +377,8 @@
     </div>
 
     <div class="container">
-        <h1 class="page-title">📸 Capture Medicine Image</h1>
-        <p class="page-subtitle">Upload a medicine photo to get full details</p>
+        <h1 class="page-title">📸 Capture Prescription Image</h1>
+        <p class="page-subtitle">Upload a picture of your medical prescription to get full details</p>
 
         <div class="card">
             <div class="camera-section" id="cameraSection">
@@ -402,16 +402,16 @@
                 <button class="btn-outline" onclick="resetCamera()" id="resetBtn" style="display: none;">
                     🔃 Reset
                 </button>
-                <label class="btn-outline" style="margin-left: 1rem;">
-                    🖼️ Upload Image
+                <label class="btn-outline" >
+                    🖼 Upload Image
                     <input type="file" id="uploadInput" accept="image/*" style="display: none;">
                 </label>
             </div>
 
-            <form id="uploadForm" method="POST" action="/process-upload" enctype="multipart/form-data" onsubmit="return handleSubmit(event)">
+            <form id="prescriptionUploadForm" method="POST" action="/validate-prescription" enctype="multipart/form-data" onsubmit="return handlePrescriptionSubmit(event)">
                 <input type="hidden" name="image_data" id="imageDataInput">
                 <button id="analyzeBtn" type="submit" class="btn-success" disabled>
-                    🔍 Analyze with Gemini Vision
+                    🔍 Validate Your Prescription
                 </button>
             </form>
         </div>
@@ -486,7 +486,7 @@
     </script>
 
     <script>
-        // Profile menu toggle - EXACT SAME AS DRUG_INFO
+        // Profile menu toggle - EXACT SAME AS DRUG_INFO AND UPLOAD_IMAGE
         function toggleProfileMenu() {
             const profileMenu = document.getElementById('profileMenu');
             profileMenu.classList.toggle('show');
@@ -654,7 +654,7 @@
             usingFrontCamera = false;
         }
 
-        function handleSubmit(event) {
+        function handlePrescriptionSubmit(event) {
             event.preventDefault();
 
             if (!imageDataInput.value) {
@@ -662,15 +662,15 @@
                 return false;
             }
 
-            resultText.innerHTML = `⏳ Analyzing image with Gemini Vision... <span class="spinner-border"></span>`;
+            resultText.innerHTML = `⏳ Analyzing your prescription with Gemini Vision... <span class="spinner-border"></span>`;
             resultBox.classList.remove('hidden');
 
             analyzeBtn.disabled = true;
             analyzeBtn.innerHTML = `Analyzing... <span class="spinner-border"></span>`;
 
-            const formData = new FormData(document.getElementById('uploadForm'));
+            const formData = new FormData(document.getElementById('prescriptionUploadForm'));
 
-            fetch("/process-upload", {
+            fetch("/validate-prescription", {
                 method: "POST",
                 body: formData
             })
@@ -681,7 +681,7 @@
                 return res.json();
             })
             .then(data => {
-                const formatted = (data.result || "No result returned from AI.").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                const formatted = (data.result || "No result returned from AI.").replace(/\\(.?)\\*/g, "<strong>$1</strong>");
                 resultText.innerHTML = formatted;
                 
                 // Scroll to results

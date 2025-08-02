@@ -1,9 +1,10 @@
-
+################ blueprint not registered ----------- this file and these routes are redundent , all thing are implemented in api_routes , so will remove it later after careful inspection
 from flask import Blueprint, render_template, request, jsonify
 from backend.utils.gemini_utils import (
     get_drug_information,
     get_symptom_recommendation,
-    analyze_image_with_gemini
+    analyze_image_with_gemini,
+    analyze_prescription_with_gemini
 )
 
 ai_bp = Blueprint("ai", __name__)
@@ -35,3 +36,6 @@ def upload_image():
         return jsonify({"response": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+        

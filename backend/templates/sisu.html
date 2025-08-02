@@ -82,17 +82,23 @@
 
                 <div id="signInMessage" class="alert-message" style="display:none;"></div>
 
-                <form class="auth-form" id="signInForm">
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" id="email" class="form-input" placeholder="Enter your email" required
-                                autocomplete="email">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
+                
+                    <form class="auth-form" id="signInForm">
+                        <div class="form-group">
+                           <label for="email" class="form-label">Email Address</label>
+                                   <div class="input-wrapper">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                <input
+                                 type="email"
+                                 id="email"
+                                class="form-input"
+                                placeholder="Enter your email"
+                                required
+                                autocomplete="email"
+                                 >
+                             </div>
+                      </div>
+                      <div class="form-group">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock input-icon"></i>
@@ -103,6 +109,7 @@
                             </button>
                         </div>
                     </div>
+
 
                     <div class="form-options">
                         <label class="checkbox-wrapper">
@@ -510,6 +517,26 @@
         // Enhanced Sign Up with role data
         document.getElementById('submitSignUp').addEventListener('click', (event) => {
             event.preventDefault();
+            const signUpForm = document.getElementById('signUpForm');
+
+            if (!signUpForm.checkValidity()) {
+                const firstInvalidField = signUpForm.querySelector(':invalid');
+                
+                if (firstInvalidField) {
+                    const parentGroup = firstInvalidField.closest('.form-group');
+
+                    if (parentGroup) {
+                        parentGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+        
+                    firstInvalidField.focus();
+                }
+
+                showMessage('Please fill out all required fields correctly.', 'signUpMessage', 'warning');
+                return;
+            }
             
             const email = document.getElementById('rEmail').value;
             const password = document.getElementById('rPassword').value;
@@ -575,6 +602,29 @@
                                 .then(() => {
                                     hideLoading();
                                     showMessage('Account created successfully! Please check your email for verification.', 'signUpMessage', 'success');
+                                    document.getElementById('signUpForm').reset();
+                                    
+                                    //  role-specific fields
+                                    document.querySelectorAll('.role-specific-fields').forEach(field => {
+                                        field.style.display = 'none';
+                                    });
+                                    
+                                    // Reset role selection visuals
+                                    document.querySelectorAll('.role-card').forEach(card => {
+                                        card.classList.remove('selected');
+                                    });
+                                    document.querySelectorAll('input[name="userRole"]').forEach(radio => {
+                                        radio.checked = false;
+                                    });
+                                    
+                                    // Clear remaining values
+                                    document.getElementById('licenseNumber').value = '';
+                                    document.getElementById('medicalLicense').value = '';
+                                    document.getElementById('specialization').value = '';
+                                    document.getElementById('institution').value = '';
+                                    document.getElementById('studentId').value = '';
+                                    document.getElementById('dateOfBirth').value = '';
+                                    document.getElementById('phoneNumber').value = '';
                                 })
                                 .catch((error) => {
                                     hideLoading();
