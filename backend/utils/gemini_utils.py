@@ -10,7 +10,6 @@ import markdown
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
-from bs4 import BeautifulSoup
 
 
 
