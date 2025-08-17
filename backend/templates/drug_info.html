@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drug Information - Aditi Pharmaceutical Assistant</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,21 +14,23 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f5f7fa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: #333;
             line-height: 1.6;
         }
 
-        /* Header */
+        /* Modern Header */
         .header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .header-content {
@@ -40,43 +43,52 @@
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2563eb;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .breadcrumb {
             color: #6b7280;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
         .breadcrumb a {
-            color: #2563eb;
+            color: #667eea;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .breadcrumb a:hover {
+            color: #764ba2;
             text-decoration: underline;
         }
 
-        /* Profile */
+        /* Modern Profile */
         .profile-container {
             position: relative;
         }
 
         #profileButton {
-            background: #2563eb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         #profileButton:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .profile-menu {
@@ -84,10 +96,11 @@
             top: 100%;
             right: 0;
             margin-top: 0.5rem;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             padding: 1.5rem;
             min-width: 250px;
             display: none;
@@ -95,12 +108,24 @@
 
         .profile-menu.show {
             display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .user-info {
             margin-bottom: 1rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .user-name {
@@ -114,262 +139,193 @@
             font-size: 0.875rem;
         }
 
-        #logout {
-            background: #dc2626;
-            color: white;
+        #logout, #myAccount {
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        #logout {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
         }
 
         #logout:hover {
-            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        #myAccount { background: #38dc26; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
-        #myAccount:hover { background: #19a531; }
+        #myAccount {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
 
-        /* Container */
+        #myAccount:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Modern Container */
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
         }
 
         .page-title {
-            font-size: 2.5rem;
-            color: #1f2937;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
             margin-bottom: 0.5rem;
             text-align: center;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .page-subtitle {
-            color: #6b7280;
-            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3rem;
             text-align: center;
             margin-bottom: 3rem;
+            font-weight: 400;
         }
 
-        /* Search Section */
-        .search-section {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .search-input-container {
-            flex: 1;
-            position: relative;
-        }
-
+        /* Modern Search Section */
         .search-input {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 1.2rem 1.5rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            outline: none;
         }
 
         .search-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 1);
         }
 
-        .drug-autocomplete-suggestions {
-            position: absolute;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 0 0 8px 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            width: 100%;
-            z-index: 1000;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            top: 100%;
-            left: 0;
-        }
-
-        .drug-autocomplete-suggestions li {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .drug-autocomplete-suggestions li:hover,
-        .drug-autocomplete-suggestions li.selected {
-            background-color: #e5e7eb;
-            font-weight: 500;
-        }
-
-        .search-btn {
-            background: #2563eb;
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
         }
 
-        .search-btn:hover {
-            background: #1d4ed8;
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
         }
 
-        .search-btn:disabled {
+        .send-button:disabled {
             background: #9ca3af;
             cursor: not-allowed;
+            transform: none;
         }
 
-        .search-examples {
-            color: #6b7280;
-            font-size: 0.9rem;
+        .search-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
-        .search-examples strong {
-            color: #374151;
-        }
-
-        /* Chat Section */
-        .chat-section {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
+        /* Modern Chat Section */
         .chat-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
         }
 
         .chat-avatar {
-            width: 50px;
-            height: 50px;
-            background: #8b5cf6;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
         .chat-info h3 {
-            color: #1f2937;
-            font-size: 1.25rem;
+            color: white;
+            font-size: 1.5rem;
             margin-bottom: 0.25rem;
+            font-weight: 700;
         }
 
         .chat-status {
-            color: #10b981;
-            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
         }
 
         .message-container {
             height: 350px;
             overflow-y: auto;
-            padding: 1rem;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-message {
-            text-align: center;
-            color: #6b7280;
-            font-style: italic;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .message {
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            max-width: 80%;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.user {
-            background: #2563eb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             margin-left: auto;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .message.assistant {
-            background: white;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             color: #1f2937;
-            border: 1px solid #e5e7eb;
-        }
-
-        .input-container {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        #userInput {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        #userInput:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .send-button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .send-button:hover {
-            background: #1d4ed8;
-        }
-
-        .send-button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .loading {
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: transparent;
+            border-top-color: #ffffff;
             animation: spin 1s ease-in-out infinite;
             margin-left: 0.5rem;
         }
@@ -378,7 +334,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 1rem;
@@ -389,19 +345,20 @@
             }
             
             .page-title {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
-            .search-form {
-                flex-direction: column;
-            }
-            
-            .chat-section {
-                padding: 1.5rem;
+            .search-section {
+                padding: 2rem 1.5rem;
             }
             
             .message-container {
                 height: 250px;
+            }
+
+            .search-input, .send-button {
+                font-size: 1.1rem;
+                padding: 1rem 1.25rem;
             }
         }
     </style>
@@ -435,41 +392,28 @@
         <h1 class="page-title">💊 Drug Information</h1>
         <p class="page-subtitle">Search comprehensive drug database for detailed information</p>
 
-        <!-- Search Section -->
-        <div class="search-section">
-            <div class="search-form">
-                <div class="search-input-container">
-                    <input type="text" class="search-input drug-autocomplete" id="drugSearch" placeholder="Enter drug name (e.g., Paracetamol, Ibuprofen, Amoxicillin...)">
-                </div>
-                <button class="search-btn" id="searchBtn" onclick="searchDrug()">
-                    🔍 Search
-                </button>
-            </div>
-            <div class="search-examples">
-                <strong>Examples:</strong> Aspirin, Metformin, Lisinopril, Atorvastatin
+        <!-- Input field moved above everything else -->
+        <div style="max-width:600px; margin:1rem auto 0 auto; text-align:center;">
+            <div class="input-container" style="display:flex; gap:0.75rem; margin-bottom:1rem;">
+                <input type="text" id="userInput" class="search-input drug-autocomplete" placeholder="Enter drug name or ask a question..." autofocus style="flex:1; padding:0.95rem 1rem; border:2px solid #2563eb; border-radius:10px; font-size:1.2rem; background:#f8fafc; box-shadow:0 1px 3px rgba(37,99,235,0.1);">
+                <button class="send-button" id="sendBtn" onclick="sendMessage()" style="background:#2563eb; color:white; border:none; padding:0.95rem 2rem; border-radius:10px; cursor:pointer; font-weight:600; font-size:1.2rem; box-shadow:0 2px 6px rgba(37,99,235,0.20);">Send</button>
             </div>
         </div>
 
-        <!-- Chat Section -->
-        <div class="chat-section">
-            <div class="chat-header">
-                <div class="chat-avatar">💊</div>
+        <!-- Professional UI section -->
+        <div class="search-section" style="max-width:600px; margin:1rem auto; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:2rem;">
+            <div class="chat-header" style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+                <div class="chat-avatar" style="width:45px; height:45px; background:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.3rem; box-shadow:0 2px 6px rgba(37,99,235,0.15);">💊</div>
                 <div class="chat-info">
-                    <h3>Drug Information Assistant</h3>
-                    <div class="chat-status">Ready to help with drug information</div>
+                    <h3 style="margin:0; color:#2563eb; font-weight:700;">Drug Information Assistant</h3>
+                    <div class="chat-status" style="color:#10b981; font-size:0.95rem;">Ask about any drug, dosage, interaction, or side effect.</div>
                 </div>
             </div>
-
-            <div id="chatbox" class="message-container">
-                <div class="welcome-message">
-                    <strong>Welcome to Drug Information Center!</strong><br>
-                    Search for any drug above or ask me about medications, dosages, interactions, side effects, and more.
-                </div>
+            <!-- Answer/Chat Box Below -->
+            <div id="chatbox" class="message-container" style="height:300px; overflow-y:auto; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:1rem; margin-bottom:1rem;">
             </div>
-
-            <div class="input-container">
-                <input type="text" id="userInput" placeholder="Ask about drug interactions, dosages, side effects..." autofocus>
-                <button class="send-button" id="sendBtn" onclick="sendMessage()">Send</button>
+            <div class="search-examples" style="text-align:center; margin-top:0.5rem; color:#6b7280; font-size:0.98rem;">
+                <strong>Examples:</strong> "Paracetamol", "What are the side effects of Ibuprofen?", "Can I take Aspirin with Metformin?"
             </div>
         </div>
     </div>
