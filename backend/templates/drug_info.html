@@ -33,8 +33,9 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
+        /* Modern Header - Wider */
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -171,9 +172,9 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* Modern Container */
+        /* Modern Container - Wider for better space utilization */
         .container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -246,6 +247,8 @@
             border-radius: 24px;
             padding: 2.5rem;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: none;
         }
 
         /* Modern Chat Section */
@@ -282,7 +285,7 @@
         }
 
         .message-container {
-            height: 350px;
+            height: 500px;
             overflow-y: auto;
             padding: 1.5rem;
             background: rgba(255, 255, 255, 0.95);
@@ -290,6 +293,7 @@
             border-radius: 16px;
             margin-bottom: 1.5rem;
             box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.05);
+            min-height: 500px;
         }
 
         .message {
@@ -334,8 +338,59 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* Drug Autocomplete Suggestions */
+        .drug-autocomplete-suggestions {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1000;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 0;
+            border-top: none;
+            text-align: left;
+        }
+
+        .drug-autocomplete-suggestions li {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .drug-autocomplete-suggestions li:hover,
+        .drug-autocomplete-suggestions li.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+        }
+
+        .drug-autocomplete-suggestions li:last-child {
+            border-bottom: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Input container for autocomplete positioning */
+        .input-container {
+            position: relative;
+            display: flex;
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+
+        .input-wrapper {
+            position: relative;
+            flex: 1;
+        }
             .header-content {
                 padding: 0 1rem;
             }
@@ -353,14 +408,14 @@
             }
             
             .message-container {
-                height: 250px;
+                height: 300px;
             }
 
             .search-input, .send-button {
                 font-size: 1.1rem;
                 padding: 1rem 1.25rem;
             }
-        }
+        
     </style>
 </head>
 <body>
@@ -392,28 +447,67 @@
         <h1 class="page-title">💊 Drug Information</h1>
         <p class="page-subtitle">Search comprehensive drug database for detailed information</p>
 
-        <!-- Input field moved above everything else -->
-        <div style="max-width:600px; margin:1rem auto 0 auto; text-align:center;">
-            <div class="input-container" style="display:flex; gap:0.75rem; margin-bottom:1rem;">
-                <input type="text" id="userInput" class="search-input drug-autocomplete" placeholder="Enter drug name or ask a question..." autofocus style="flex:1; padding:0.95rem 1rem; border:2px solid #2563eb; border-radius:10px; font-size:1.2rem; background:#f8fafc; box-shadow:0 1px 3px rgba(37,99,235,0.1);">
-                <button class="send-button" id="sendBtn" onclick="sendMessage()" style="background:#2563eb; color:white; border:none; padding:0.95rem 2rem; border-radius:10px; cursor:pointer; font-weight:600; font-size:1.2rem; box-shadow:0 2px 6px rgba(37,99,235,0.20);">Send</button>
+            <!-- Input field moved above everything else -->
+        <div style="width: 100%; margin:1rem auto 0 auto; position:relative;">
+            <div class="input-container" style="display:flex; gap:0.75rem; margin-bottom:1rem; max-width:1100px; margin-left:auto; margin-right:auto; position:relative;">
+                <div class="input-wrapper" style="position:relative; flex:1; text-align:left;">
+                    <input type="text" id="userInput" class="search-input drug-autocomplete" placeholder="Enter drug name or ask a question..." autofocus style="width:100%; padding:0.95rem 1rem; border:2px solid #667eea; border-radius:12px; font-size:1.2rem; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); box-shadow:0 4px 15px rgba(102,126,234,0.15); transition:all 0.3s ease;">
+                    <!-- Autocomplete suggestions positioned relative to input -->
+                    <ul class="drug-autocomplete-suggestions" id="drugSuggestions" style="position:absolute; top:100%; left:0; width:100%; background:rgba(255,255,255,0.98); backdrop-filter:blur(10px); border:1px solid rgba(102,126,234,0.2); border-radius:0 0 12px 12px; box-shadow:0 8px 25px rgba(0,0,0,0.15); z-index:1000; display:none; list-style:none; margin:0; padding:0; text-align:left;"></ul>
+                </div>
+                <button class="send-button" id="sendBtn" onclick="sendMessage()" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; border:none; padding:0.95rem 2.5rem; border-radius:12px; cursor:pointer; font-weight:600; font-size:1.2rem; box-shadow:0 4px 15px rgba(102,126,234,0.3); transition:all 0.3s ease; white-space:nowrap;">Send</button>
             </div>
-        </div>
-
-        <!-- Professional UI section -->
-        <div class="search-section" style="max-width:600px; margin:1rem auto; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:2rem;">
-            <div class="chat-header" style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
-                <div class="chat-avatar" style="width:45px; height:45px; background:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.3rem; box-shadow:0 2px 6px rgba(37,99,235,0.15);">💊</div>
+        </div>        <!-- Professional UI section -->
+        <div class="search-section" style="width: 100%; margin:1rem auto; background:rgba(255, 255, 255, 0.12); backdrop-filter:blur(25px); border:1px solid rgba(255, 255, 255, 0.25); border-radius:24px; padding:2.5rem; box-shadow:0 25px 80px rgba(0, 0, 0, 0.15);">
+            <div class="chat-header" style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.2);">
+                <div class="chat-avatar" style="width:55px; height:55px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.5rem; box-shadow:0 8px 25px rgba(102,126,234,0.3);">💊</div>
                 <div class="chat-info">
-                    <h3 style="margin:0; color:#2563eb; font-weight:700;">Drug Information Assistant</h3>
-                    <div class="chat-status" style="color:#10b981; font-size:0.95rem;">Ask about any drug, dosage, interaction, or side effect.</div>
+                    <h3 style="margin:0; color:white; font-weight:700; font-size:1.5rem; text-shadow:0 2px 10px rgba(0,0,0,0.3);">Drug Information Assistant</h3>
+                    <div class="chat-status" style="color:rgba(255,255,255,0.85); font-size:1rem; margin-top:0.25rem;">Ask about any drug, dosage, interaction, or side effect.</div>
                 </div>
             </div>
-            <!-- Answer/Chat Box Below -->
-            <div id="chatbox" class="message-container" style="height:300px; overflow-y:auto; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+            <!-- Answer/Chat Box Below - Expanded with side info -->
+            <div style="display: flex; gap: 2rem; align-items: stretch;">
+                <div id="chatbox" class="message-container" style="flex: 1; height:500px; overflow-y:auto; background:rgba(255, 255, 255, 0.95); backdrop-filter:blur(15px); border-radius:20px; padding:2rem; box-shadow:inset 0 4px 30px rgba(0, 0, 0, 0.08); border:1px solid rgba(255,255,255,0.3);">
+                </div>
+                <!-- Side information panel -->
+                <div class="side-panel" style="width: 280px; background:rgba(255, 255, 255, 0.1); backdrop-filter:blur(15px); border-radius:20px; padding:2rem; border:1px solid rgba(255,255,255,0.2);">
+                    <h4 style="color: white; margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; text-align: center;">💡 Quick Tips</h4>
+                    <div style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.6;">
+                        <div style="display: flex; align-items: center; margin-bottom: 1.2rem; padding: 0.8rem; background: rgba(255,255,255,0.08); border-radius: 10px;">
+                            <span style="font-size: 1.2rem; margin-right: 0.8rem;">🔍</span>
+                            <div>
+                                <strong style="display: block; color: white;">Search Drugs</strong>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 1.2rem; padding: 0.8rem; background: rgba(255,255,255,0.08); border-radius: 10px;">
+                            <span style="font-size: 1.2rem; margin-right: 0.8rem;">❓</span>
+                            <div>
+                                <strong style="display: block; color: white;">Ask Questions</strong>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 1.2rem; padding: 0.8rem; background: rgba(255,255,255,0.08); border-radius: 10px;">
+                            <span style="font-size: 1.2rem; margin-right: 0.8rem;">⚠️</span>
+                            <div>
+                                <strong style="display: block; color: white;">Check Interactions</strong>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.8rem; background: rgba(255,255,255,0.08); border-radius: 10px;">
+                            <span style="font-size: 1.2rem; margin-right: 0.8rem;">📊</span>
+                            <div>
+                                <strong style="display: block; color: white;">Dosage Info</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding: 1.2rem; background: rgba(255,255,255,0.12); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <p style="color: rgba(255,255,255,0.85); font-size: 0.9rem; margin: 0; text-align: center; line-height: 1.4;">
+                            <strong style="display: block; margin-bottom: 0.5rem;">⚕️ Medical Disclaimer</strong>
+                            Always consult healthcare professionals for medical advice
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="search-examples" style="text-align:center; margin-top:0.5rem; color:#6b7280; font-size:0.98rem;">
-                <strong>Examples:</strong> "Paracetamol", "What are the side effects of Ibuprofen?", "Can I take Aspirin with Metformin?"
+        </div>
             </div>
         </div>
     </div>
