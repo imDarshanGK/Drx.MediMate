@@ -12,8 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Password visibility toggles
     const togglePassword = document.getElementById('togglePassword');
     const toggleSignUpPassword = document.getElementById('toggleSignUpPassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword'); // NEW
     const passwordInput = document.getElementById('password');
     const signUpPasswordInput = document.getElementById('rPassword');
+    const confirmPasswordInput = document.getElementById('cPassword'); // NEW
     
     // Form switching functions
     function showForm(targetForm) {
@@ -34,56 +36,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Event listeners for form switching
-    if (signUpButton) {
-        signUpButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            showForm(signUpForm);
-        });
-    }
-    
-    if (signInButton) {
-        signInButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            showForm(signInForm);
-        });
-    }
-    
-    if (recoverPasswordLink) {
-        recoverPasswordLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showForm(recoverForm);
-        });
-    }
-    
-    if (backToSignIn) {
-        backToSignIn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showForm(signInForm);
-        });
-    }
+    if (signUpButton) signUpButton.addEventListener('click', (e) => { e.preventDefault(); showForm(signUpForm); });
+    if (signInButton) signInButton.addEventListener('click', (e) => { e.preventDefault(); showForm(signInForm); });
+    if (recoverPasswordLink) recoverPasswordLink.addEventListener('click', (e) => { e.preventDefault(); showForm(recoverForm); });
+    if (backToSignIn) backToSignIn.addEventListener('click', (e) => { e.preventDefault(); showForm(signInForm); });
     
     // Password visibility toggles
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            const icon = togglePassword.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
+    function setupPasswordToggle(toggleButton, passwordField) {
+        if (toggleButton && passwordField) {
+            toggleButton.addEventListener('click', () => {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                const icon = toggleButton.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+        }
     }
     
-    if (toggleSignUpPassword && signUpPasswordInput) {
-        toggleSignUpPassword.addEventListener('click', () => {
-            const type = signUpPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            signUpPasswordInput.setAttribute('type', type);
-            
-            const icon = toggleSignUpPassword.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
-    }
+    setupPasswordToggle(togglePassword, passwordInput);
+    setupPasswordToggle(toggleSignUpPassword, signUpPasswordInput);
+    setupPasswordToggle(toggleConfirmPassword, confirmPasswordInput); // NEW
     
     // Password strength checker
     if (signUpPasswordInput) {
@@ -95,63 +69,38 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = e.target.value;
             const strength = checkPasswordStrength(password);
             
-            // Update strength bars
             strengthBars.forEach((bar, index) => {
-                if (index < strength.score) {
-                    bar.style.backgroundColor = getStrengthColor(strength.score);
-                } else {
-                    bar.style.backgroundColor = 'var(--gray-200)';
-                }
+                bar.style.backgroundColor = index < strength.score ? getStrengthColor(strength.score) : 'var(--gray-200)';
             });
             
-            // Update strength text
-            if (strengthText) {
-                strengthText.textContent = getStrengthLabel(strength.score);
-            }
+            if (strengthText) strengthText.textContent = getStrengthLabel(strength.score);
             
-            // Update requirements
             requirements.forEach(req => {
                 const reqType = req.getAttribute('data-requirement');
-                if (strength.requirements[reqType]) {
-                    req.classList.add('met');
-                } else {
-                    req.classList.remove('met');
-                }
+                req.classList.toggle('met', strength.requirements[reqType]);
             });
         });
     }
     
     // Role selection handling
-    const roleRadios = document.querySelectorAll('input[name="userRole"]');
-    roleRadios.forEach(radio => {
+    document.querySelectorAll('input[name="userRole"]').forEach(radio => {
         radio.addEventListener('change', function() {
-            // Hide all role-specific fields
             document.querySelectorAll('.role-specific-fields').forEach(field => {
                 field.style.display = 'none';
-                // Clear fields when hiding
                 field.querySelectorAll('input').forEach(input => {
-                    if (input.type !== 'radio' && input.type !== 'checkbox') {
-                        input.removeAttribute('required');
-                    }
+                    input.removeAttribute('required');
                 });
             });
             
-            // Show selected role's fields
-            const selectedRole = this.value;
-            const roleFields = document.getElementById(`${selectedRole}Fields`);
+            const roleFields = document.getElementById(`${this.value}Fields`);
             if (roleFields) {
                 roleFields.style.display = 'block';
-                // Add required attribute to visible role-specific fields
-                const requiredFields = roleFields.querySelectorAll('input[data-required="true"]');
-                requiredFields.forEach(input => {
+                roleFields.querySelectorAll('input[data-required="true"]').forEach(input => {
                     input.setAttribute('required', 'required');
                 });
             }
 
-            // Update role cards visual state
-            document.querySelectorAll('.role-card').forEach(card => {
-                card.classList.remove('selected');
-            });
+            document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
             this.nextElementSibling.classList.add('selected');
         });
     });
@@ -163,40 +112,22 @@ document.addEventListener('DOMContentLoaded', function() {
             lowercase: /[a-z]/.test(password),
             number: /\d/.test(password)
         };
-        
         const score = Object.values(requirements).filter(Boolean).length;
-        
         return { requirements, score };
     }
     
     function getStrengthColor(score) {
-        switch (score) {
-            case 1: return 'var(--error-500)';
-            case 2: return 'var(--warning-500)';
-            case 3: return 'var(--warning-500)';
-            case 4: return 'var(--success-500)';
-            default: return 'var(--gray-200)';
-        }
+        return ['var(--gray-200)', 'var(--error-500)', 'var(--warning-500)', 'var(--warning-500)', 'var(--success-500)'][score] || 'var(--gray-200)';
     }
     
     function getStrengthLabel(score) {
-        switch (score) {
-            case 0: return 'Password strength';
-            case 1: return 'Very weak';
-            case 2: return 'Weak';
-            case 3: return 'Good';
-            case 4: return 'Strong';
-            default: return 'Password strength';
-        }
+        return ['Password strength', 'Very weak', 'Weak', 'Good', 'Strong'][score] || 'Password strength';
     }
     
-    // Form validation
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-    
-    function validateForm(formType) {
+    // Make validateForm global to be accessible by the Firebase module script
+    window.validateForm = function(formType) {
+        const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
         if (formType === 'signIn') {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -205,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('Please fill in all fields.', 'signInMessage', 'warning');
                 return false;
             }
-            
             if (!validateEmail(email)) {
                 showMessage('Please enter a valid email address.', 'signInMessage', 'error');
                 return false;
@@ -215,39 +145,39 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formType === 'signUp') {
             const email = document.getElementById('rEmail').value;
             const password = document.getElementById('rPassword').value;
+            const confirmPassword = document.getElementById('cPassword').value; // NEW
             const firstName = document.getElementById('fName').value;
             const lastName = document.getElementById('lName').value;
             const selectedRole = document.querySelector('input[name="userRole"]:checked');
             const agreeTerms = document.getElementById('agreeTerms').checked;
             
-            if (!email || !password || !firstName || !lastName) {
+            if (!email || !password || !firstName || !lastName || !confirmPassword) {
                 showMessage('Please fill in all required fields.', 'signUpMessage', 'warning');
                 return false;
             }
-            
+            // NEW: Password match validation
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match. Please try again.', 'signUpMessage', 'warning');
+                return false;
+            }
             if (!selectedRole) {
                 showMessage('Please select your role.', 'signUpMessage', 'warning');
                 return false;
             }
-            
             if (!validateEmail(email)) {
                 showMessage('Please enter a valid email address.', 'signUpMessage', 'error');
                 return false;
             }
-            
-            const strength = checkPasswordStrength(password);
-            if (strength.score < 3) {
-                showMessage('Please choose a stronger password.', 'signUpMessage', 'error');
+            if (checkPasswordStrength(password).score < 4) { // Requiring strong password
+                showMessage('Please choose a stronger password that meets all criteria.', 'signUpMessage', 'error');
                 return false;
             }
             
-            // Validate role-specific required fields
             const roleFields = document.getElementById(`${selectedRole.value}Fields`);
             if (roleFields) {
-                const requiredFields = roleFields.querySelectorAll('input[required]');
-                for (let field of requiredFields) {
+                for (let field of roleFields.querySelectorAll('input[required]')) {
                     if (!field.value.trim()) {
-                        showMessage(`Please fill in all required fields for ${selectedRole.value}.`, 'signUpMessage', 'warning');
+                        showMessage(`Please fill in all required fields for the ${selectedRole.value} role.`, 'signUpMessage', 'warning');
                         return false;
                     }
                 }
@@ -258,120 +188,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
         }
-        
         return true;
     }
     
-    // Enhanced message function
+    // Make showMessage global
     window.showMessage = function(message, divId, type = 'error') {
         const messageDiv = document.getElementById(divId);
         messageDiv.className = `alert-message ${type}`;
-        messageDiv.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
-            <span>${message}</span>
-        `;
+        messageDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i><span>${message}</span>`;
         messageDiv.style.display = "flex";
-        messageDiv.style.opacity = 1;
         
         setTimeout(() => {
             messageDiv.style.opacity = 0;
-            setTimeout(() => {
-                messageDiv.style.display = "none";
-                messageDiv.style.opacity = 1;
-            }, 300);
+            setTimeout(() => { messageDiv.style.display = "none"; messageDiv.style.opacity = 1; }, 300);
         }, 5000);
     };
-    
-    // Role-based features initialization
-    function initializeRoleFeatures() {
-        // Add visual feedback for role selection
-        const roleCards = document.querySelectorAll('.role-card');
-        roleCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                if (!this.classList.contains('selected')) {
-                    this.style.transform = 'translateY(-2px)';
-                }
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                if (!this.classList.contains('selected')) {
-                    this.style.transform = 'translateY(0)';
-                }
-            });
-        });
-    }
-    
-    // Security enhancement: Clear sensitive data on page unload
-    window.addEventListener('beforeunload', function() {
-        // Clear password fields
-        document.querySelectorAll('input[type="password"]').forEach(input => {
-            input.value = '';
-        });
-    });
-    
-    // Keyboard navigation enhancement
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const activeForm = document.querySelector('.form-container.active');
-            if (activeForm) {
-                const submitButton = activeForm.querySelector('button[type="submit"], button[id^="submit"]');
-                if (submitButton && !submitButton.disabled) {
-                    submitButton.click();
-                }
-            }
-        }
-        
-        // Tab navigation for role selection
-        if (e.key === 'Tab') {
-            const focusedElement = document.activeElement;
-            if (focusedElement && focusedElement.classList.contains('role-card')) {
-                e.preventDefault();
-                const roleCards = Array.from(document.querySelectorAll('.role-card'));
-                const currentIndex = roleCards.indexOf(focusedElement);
-                const nextIndex = e.shiftKey ? 
-                    (currentIndex - 1 + roleCards.length) % roleCards.length :
-                    (currentIndex + 1) % roleCards.length;
-                roleCards[nextIndex].focus();
-            }
-        }
-    });
-    
-    // Initialize role features
-    initializeRoleFeatures();
     
     // Initialize with sign-in form
     showForm(signInForm);
 });
-
-// Role-based utility functions
-window.RoleUtils = {
-    getRoleDisplayName: function(role) {
-        const roleNames = {
-            pharmacist: 'Pharmacist',
-            doctor: 'Doctor',
-            student: 'Student',
-            patient: 'Patient'
-        };
-        return roleNames[role] || 'User';
-    },
-    
-    getRoleIcon: function(role) {
-        const roleIcons = {
-            pharmacist: 'fas fa-pills',
-            doctor: 'fas fa-stethoscope',
-            student: 'fas fa-graduation-cap',
-            patient: 'fas fa-user-injured'
-        };
-        return roleIcons[role] || 'fas fa-user';
-    },
-    
-    getRolePermissions: function(role) {
-        const permissions = {
-            pharmacist: ['inventory', 'prescriptions', 'reports', 'patients'],
-            doctor: ['prescriptions', 'patients', 'reports', 'consultations'],
-            student: ['learning', 'resources', 'progress', 'assignments'],
-            patient: ['profile', 'medications', 'history', 'appointments']
-        };
-        return permissions[role] || [];
-    }
-};
