@@ -1,3 +1,21 @@
+@api_bp.route('/check_drug_interactions', methods=['POST'])
+def check_drug_interactions():
+    logging.info("API /check_drug_interactions called")
+    try:
+        data = request.get_json()
+        drugs = data.get('drugs')
+        if not drugs or not isinstance(drugs, list) or len(drugs) < 2:
+            return api_response('At least two drugs must be selected.', 400)
+        # Use Gemini or other logic to check interactions
+        summary = get_drug_comparison_summary(drugs[0], drugs[1])
+        # Simple logic: if 'interaction' or 'warning' found in summary, return warning
+        warning = None
+        if 'interaction' in summary.lower() or 'warning' in summary.lower():
+            warning = 'Potential drug interaction detected. Please review the summary.'
+        return jsonify({'summary': summary, 'warning': warning})
+    except Exception as e:
+        logging.exception("Exception in /check_drug_interactions")
+        return api_response(f"Internal error: {str(e)}", 500)
 from flask import Blueprint, request, jsonify
 from ..utils.gemini_utils import get_drug_information, get_symptom_recommendation, analyze_image_with_gemini, analyze_prescription_with_gemini, analyze_allergies, get_drug_comparison_summary
 import logging
