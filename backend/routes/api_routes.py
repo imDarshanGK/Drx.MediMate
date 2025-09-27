@@ -1,3 +1,11 @@
+
+from flask import Blueprint, request, jsonify
+from ..utils.gemini_utils import get_drug_information, get_symptom_recommendation, analyze_image_with_gemini, analyze_prescription_with_gemini, analyze_allergies, get_drug_comparison_summary
+import logging
+logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
+
+api_bp = Blueprint('api', __name__)
+
 @api_bp.route('/check_drug_interactions', methods=['POST'])
 def check_drug_interactions():
     logging.info("API /check_drug_interactions called")
@@ -16,13 +24,6 @@ def check_drug_interactions():
     except Exception as e:
         logging.exception("Exception in /check_drug_interactions")
         return api_response(f"Internal error: {str(e)}", 500)
-from flask import Blueprint, request, jsonify
-from ..utils.gemini_utils import get_drug_information, get_symptom_recommendation, analyze_image_with_gemini, analyze_prescription_with_gemini, analyze_allergies, get_drug_comparison_summary
-import logging
-logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
-
-
-api_bp = Blueprint('api', __name__)
 
 
 # ---------------------------
