@@ -1,8 +1,8 @@
-# 🦖 Aditi - Your Pharmaceutical Assistant
+# 💊 Drx.MediMate - Your Pharmaceutical Assistant
 
 ## 📈 Project Overview
 
-**Aditi** is a Flask-based web application that serves as your AI-powered pharmaceutical assistant. It provides:
+**Drx.MediMate** is a Flask-based web application that serves as your AI-powered pharmaceutical assistant. It provides:
 
 - Clinical drug information, including therapeutic uses, dosage guidelines, side effects, contraindications, and drug interactions.
 - Symptom-based drug recommendations following evidence-based guidelines.
@@ -96,8 +96,8 @@ This modular structure makes it simple to extend the application.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/aditi.git
-   cd aditi
+   git clone https://github.com/your-username/Drx.MediMate.git
+   cd Drx.MediMate
    ```
 
 2. Install dependencies:
@@ -149,7 +149,7 @@ Contributions are welcome! Follow these steps:
 1. Fork the repository.
 2. Clone your fork:
    ```bash
-   git clone https://github.com/your-username/aditi.git
+   git clone https://github.com/your-username/Drx.MediMate.git
    ```
 3. Create a feature branch:
    ```bash
