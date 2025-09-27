@@ -451,14 +451,19 @@
             compareBtn.innerHTML = `Comparing... <span class="loading"></span>`;
 
             try {
-                const res = await fetch('/compare_drugs_summary', {
+                const res = await fetch('/check_drug_interactions', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ drug1, drug2 }),
+                    body: JSON.stringify({ drugs: [drug1, drug2] }),
                 });
 
                 const data = await res.json();
-                markdownContainer.innerHTML = marked.parse(data.summary || '❌ No summary available.');
+                let output = '';
+                if (data.warning) {
+                    output += `<div style='color: #F59E0B; font-weight: bold; margin-bottom: 1rem;'>${data.warning}</div>`;
+                }
+                output += marked.parse(data.summary || '❌ No summary available.');
+                markdownContainer.innerHTML = output;
                 markdownContainer.style.display = 'block';
             } catch (error) {
                 console.error('Comparison error:', error);
