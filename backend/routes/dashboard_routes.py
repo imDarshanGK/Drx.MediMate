@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from backend.utils.role_decorator import role_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -14,18 +15,22 @@ def dashboard():
 
 # Role-specific Dashboard Routes
 @dashboard_bp.route('/doctor-dashboard.html')
+@role_required('doctor')
 def doctor_dashboard():
     return render_template('doctor-dashboard.html')
 
 @dashboard_bp.route('/pharmacist-dashboard.html')
+@role_required('pharmacist')
 def pharmacist_dashboard():
     return render_template('pharmacist-dashboard.html')
 
 @dashboard_bp.route('/student-dashboard.html')
+@role_required('student')
 def student_dashboard():
     return render_template('student-dashboard.html')
 
 @dashboard_bp.route('/patient-dashboard.html')
+@role_required('patient')
 def patient_dashboard():
     return render_template('patient-dashboard.html')
 
